@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package de.gonicus.gonnect;
+
+message Error
+{
+    enum errorType {
+        Fatal = 0;
+        NetworkTimeout = 1;
+    };
+
+    errorType type = 1;
+}
+
+message CapabilityRequest
+{
+}
+
+message ToClientContainer
+{
+  uint64 tag = 0;
+
+  oneof msg {
+    CapabilityRequest capability_msg = 1;
+    SendMessageRequest send_msg = 2;
+    LoginRequest login_msg = 3;
+  }
+}
+
+message FromClientContainer
+{
+  uint64 tag = 0;
+
+  oneof msg {
+    CapabilityResponse capability_msg = 1;
+    LoginResponse login_msg = 2;
+    SendMessageRequest send_msg = 3;
+    Error error = 255;
+  }
+}
+
+//->  uint64 size -> ToClientContainer
+//<-  uint64 size -> FromClientContainer
+//
+//Buddies
+//Räume
+//Nachrichten
+//  * Mimetype
+//  * Payload
+//  * RelatesTo
+//  * Editieren
+//  * Löschen
+//  * Pinned?
+//Reactions
+//Events
+//  * Auth
+//  * Neue Nachrichten
+//  * Reaktionen erhalten?
+//  * Einladung
+//  * Beitreten/Verlassen
+//  * Lesebestätigung
+//  * Tippt
+
