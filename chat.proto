@@ -2,42 +2,157 @@ syntax = "proto3";
 
 package de.gonicus.gonnect;
 
-message Error
-{
+// Generic Container for any message that is sent to the headless client.
+message ToClientContainer {
+
+    // A tag to identify this "to client" message and relate it to the response in "from client" message.
+    // The value 0 means "no identification", i.e. a specific response is not expected.
+    uint64 tag = 1;
+
+    oneof content {
+        CapabilityRequest capabilityRequest = 2;
+        SendMessageRequest sendMessageRequest = 3;
+        LoginRequest loginRequest = 4;
+
+        StatusUpdate statusUpdate = 5;
+    }
+}
+
+message FromClientContainer {
+
+    // A tag to identify which "to client" message this belongs to.
+    // The value 0 means "no identification", i.e. the message does not relate to a request.
+    uint64 tag = 1;
+
+    oneof content {
+        CapabilityResponse capabilityResponse = 2;
+        LoginResponse loginResponse = 3;
+        SendMessageRequest sendMessageResponse = 4;
+        MessageReceivedEvent messageReceivedEvent = 5;
+        Error error = 255;
+    }
+}
+
+message Error {
+
     enum errorType {
-        Fatal = 0;
-        NetworkTimeout = 1;
+
+        // An error that cannot be described by any of the other values or its nature is unknown.
+        // Using one of the other more specific error type is preferred.
+        Unknown = 0;
+
+        // When a response was not received in a pre-defined time.
+        Timeout = 1;
+
+        // The error happend with the network connection or failing transport.
+        Network = 2;
+
+        // Whenever the required authorization is missing.
+        Authorization = 3;
     };
 
     errorType type = 1;
+    optional string errorString = 2;
 }
 
-message CapabilityRequest
-{
+// Request to login to the backend with the given information.
+// Must have no effect when already logged in.
+message LoginRequest {
+
+    // The id of the user account.
+    string userId = 1;
+
+    // The url of the backend. Optional because some systems can derive it from the userId.
+    optional string backendUrl = 2;
 }
 
-message ToClientContainer
-{
-  uint64 tag = 0;
+message LoginResponse {
 
-  oneof msg {
-    CapabilityRequest capability_msg = 1;
-    SendMessageRequest send_msg = 2;
-    LoginRequest login_msg = 3;
-  }
+    // A url that must be opened in a web browser to continue the login process.
+    string loginUrl = 1;
 }
 
-message FromClientContainer
-{
-  uint64 tag = 0;
+// Notifies about changes in the connection state between headless client and backend.
+message StatusUpdate {
 
-  oneof msg {
-    CapabilityResponse capability_msg = 1;
-    LoginResponse login_msg = 2;
-    SendMessageRequest send_msg = 3;
-    Error error = 255;
-  }
+    enum statusCode {
+
+        // No connection is made.
+        Disconnected = 0;
+
+        // The server is connected, but the client is not authorized yet.
+        Connected = 1;
+
+        // The server is connected and the client is authorized.
+        LoggedIn = 2;
+    };
+
+    // The current connection status.
+    statusCode code = 1;
 }
+
+// Request the headless client to send the capabilities of the backend.
+message CapabilityRequest { }
+
+// The capabilities (supported features) of the backend.
+message CapabilityResponse {
+
+    // The backend supports direct communication between two participants.
+    bool directRooms = 1;
+
+    // The backend supports chat rooms between multiple participants.
+    bool groupRooms = 2;
+
+    // The backend supports creation of sub threads inside a chat room.
+    bool subThreads = 3;
+
+    // List of MIME types that can be send via the backend.
+    repeated string mimeTypes = 4;
+}
+
+// Request to send a chat message.
+message SendMessageRequest {
+
+    // The id of the participant or room that shall receive the message.
+    string receiverId = 1;
+
+    // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
+    // This might be earier than the creation of the request.
+    uint64 timestamp = 2;
+
+    // The MIME type of the content.
+    string mimeType = 3;
+
+    // The actual payload of the message. Encoding depends on mimeType.
+    string content = 4;
+}
+
+// Confirms that a message has been sent.
+// A MessageReceivedEvent will not be created for messages that have been sent via this client.
+message SendMessageResponse {
+
+    // Unique id to identify the message (e.g. for later modification).
+    string messageId = 1;
+}
+
+// Notifies about a received message from another participant.
+message MessageReceivedEvent {
+
+    // Unique id to identify the message (e.g. for later modification).
+    string messageId = 1;
+
+    // Id of the participant or room who has sent the message.
+    string fromId = 2;
+
+    // Id of the room this message was sent in.
+    string roomId = 3;
+
+    // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
+    uint64 timestamp = 4;
+}
+
+
+
 
 //->  uint64 size -> ToClientContainer
 //<-  uint64 size -> FromClientContainer
