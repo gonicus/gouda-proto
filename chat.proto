@@ -2,37 +2,51 @@ syntax = "proto3";
 
 package de.gonicus.gonnect;
 
-// Generic Container for any message that is sent to the headless client.
+// Generic container for any message that is sent to the headless client.
+// Every message sent to the client must be wrapped in this container.
 message ToClientContainer {
 
     // A tag to identify this "to client" message and relate it to the response in "from client" message.
     // The value 0 means "no identification", i.e. a specific response is not expected.
     uint64 tag = 1;
 
+    // The payload; one of these requests.
     oneof content {
         CapabilityRequest capabilityRequest = 2;
-        SendMessageRequest sendMessageRequest = 3;
-        LoginRequest loginRequest = 4;
+        SendOrEditMessageRequest sendOrEditMessageRequest = 3;
+        RemoveMessageRequest removeMessageRequest = 4;
+        LoginRequest loginRequest = 5;
+        BuddyListRequest buddyListRequest = 6;
+        RoomListRequest roomListRequest = 7;
+        ToggleReactionRequest toggleReactionRequest = 8;
 
-        StatusUpdate statusUpdate = 5;
+        StatusUpdate statusUpdate = 256;
     }
 }
 
+// Generic container for any message that is sent from the headless client.
+// Every message sent from the client must be wrapped in this container.
 message FromClientContainer {
 
     // A tag to identify which "to client" message this belongs to.
     // The value 0 means "no identification", i.e. the message does not relate to a request.
     uint64 tag = 1;
 
+    // The payload; one of these requests.
     oneof content {
-        CapabilityResponse capabilityResponse = 2;
-        LoginResponse loginResponse = 3;
-        SendMessageRequest sendMessageResponse = 4;
-        MessageReceivedEvent messageReceivedEvent = 5;
-        Error error = 255;
+        Error error = 2;
+        CapabilityResponse capabilityResponse = 3;
+        LoginResponse loginResponse = 4;
+        SendMessageResponse sendMessageResponse = 5;
+        RemoveMessageEvent removeMessageEvent = 6;
+        MessageReceivedEvent messageReceivedEvent = 7;
+        BuddyListResponse buddyListResponse = 8;
+        RoomListResponse roomListResponse = 9;
+        ReactionEvent reactionEvent = 10;
     }
 }
 
+// Generic error occurred in the backend or the headless client.
 message Error {
 
     enum errorType {
@@ -51,7 +65,10 @@ message Error {
         Authorization = 3;
     };
 
+    // The type of this error.
     errorType type = 1;
+
+    // An optional string describing details of the error.
     optional string errorString = 2;
 }
 
@@ -111,20 +128,13 @@ message CapabilityResponse {
 }
 
 // Request to send a chat message.
-message SendMessageRequest {
+message SendOrEditMessageRequest {
 
-    // The id of the participant or room that shall receive the message.
-    string receiverId = 1;
-
-    // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
-    // This might be earier than the creation of the request.
-    uint64 timestamp = 2;
-
-    // The MIME type of the content.
-    string mimeType = 3;
-
-    // The actual payload of the message. Encoding depends on mimeType.
-    string content = 4;
+    // The message that shall be sent or modified.
+    // If the messageId is not set, it means "send new message", an id is created and a SendMessageResponse is sent.
+    // If the messageId is set, it means "edit existing message". The information of the Message object will then
+    // be used to override the pre-existing information. MessageReceivedEvent is sent afterwards.
+    Message messageContent = 1;
 }
 
 // Confirms that a message has been sent.
@@ -135,44 +145,145 @@ message SendMessageResponse {
     string messageId = 1;
 }
 
-// Notifies about a received message from another participant.
+// Notifies about a received message from another participant or an edited message (by anyone).
 message MessageReceivedEvent {
 
-    // Unique id to identify the message (e.g. for later modification).
+    // The actual message.
+    Message messageContent = 1;
+}
+
+// Request the backend to retract and delete an exisiting message.
+// Must result in an Error or RemoveMessageEvent.
+message RemoveMessageRequest {
+
+    // Id of the message.
+    string messageId = 1;
+}
+
+// Event notifying that a message has been retracted and removed.
+message RemoveMessageEvent {
+
+    // Id of the removed message.
+    string messageId = 1;
+}
+
+// Request list of all known buddies.
+message BuddyListRequest {}
+
+// Response for a buddy list request.
+message BuddyListResponse {
+
+    // List of buddies.
+    repeated Buddy buddyList = 1;
+}
+
+// Request a list of rooms.
+message RoomListRequest {
+
+    // Whether the resulting list shall include room which the user is a member of.
+    bool includeJoined = 1;
+
+    // Whether the resulting list shall include room which the user is not a member of.
+    bool includeUnjoined = 2;
+}
+
+// Response to a RoomListResponse.
+message RoomListResponse {
+
+    // The requested list of rooms.
+    repeated Room roomList = 1;
+}
+
+// Request to have the current reaction status inverted for this user.
+message ToggleReactionRequest {
+
+    // The message to change the reaction for.
     string messageId = 1;
 
-    // Id of the participant or room who has sent the message.
-    string fromId = 2;
+    // The reaction (e.g. emoji) to toggle.
+    string reaction = 2;
+}
 
-    // Id of the room this message was sent in.
-    string roomId = 3;
+// Sent when a reaction was added, removed or has changed in any other way.
+// Changes triggered by the user themself are included.
+// An empty participantList means that this reaction is not vald anymore.
+message ReactionEvent {
+
+    // The reaction information.
+    Reaction reaction = 1;
+}
+
+// Describes a single buddy entity.
+message Buddy {
+
+    // Unique string which identifies the buddy.
+    string buddyId = 1;
+
+    // Optional nice name to display instead of the buddyId.
+    optional string displayName = 2;
+}
+
+// Describes a room entity. This might be a room with several participants or just a direct chat between two.
+message Room {
+
+    // Unique string identifying the room.
+    string roomId = 1;
+
+    // Optional nice name to dipslay instead of the roomId.
+    optional string displayName = 2;
+
+    // All participants of this room.
+    repeated Buddy participantList = 3;
+}
+
+// Describes a chat message.
+message Message {
+
+    // Unique string identifying the message.
+    // If the id is set by the backend, this field might be missing when sending a new message.
+    optional string messageId = 1;
+
+    // Id of the room this message is sent to.
+    string roomId = 2;
+
+    // Id of the sender, which might be a participant or the room itself in case of room messages.
+    string senderId = 3;
 
     // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
     uint64 timestamp = 4;
+
+    // The MIME type of the content.
+    string mimeType = 5;
+
+    // The actual payload of the message. Encoding depends on mimeType.
+    string content = 6;
+
+    // The original message this relates to, e.g. when answering to a specific message.
+    optional string relatedMessageId = 7;
+
+    // Whether this message is pinned, i.e. prominently shown in the room.
+    bool isPinned = 8;
+}
+
+// Describes a reaction to a message, e.g. attaching an emoji to it.
+// A reaction is identified by messageId and reaction combined.
+message Reaction {
+
+    // Id of the message this reaction is for.
+    string messageId = 1;
+
+    // The actual reaction (e.g. emoji).
+    string reaction = 2;
+
+    // List of all users that made this reaction, including the own user as well.
+    // If this list is empty, it means that this reaction does not exist any longer.
+    repeated Buddy participantList = 3;
 }
 
 
 
-
-//->  uint64 size -> ToClientContainer
-//<-  uint64 size -> FromClientContainer
-//
-//Buddies
-//Räume
-//Nachrichten
-//  * Mimetype
-//  * Payload
-//  * RelatesTo
-//  * Editieren
-//  * Löschen
-//  * Pinned?
-//Reactions
 //Events
-//  * Auth
-//  * Neue Nachrichten
-//  * Reaktionen erhalten?
 //  * Einladung
 //  * Beitreten/Verlassen
 //  * Lesebestätigung
 //  * Tippt
-
