@@ -4,7 +4,7 @@ package de.gonicus.gonnect;
 
 // Generic container for any message that is sent to the headless client.
 // Every message sent to the client must be wrapped in this container.
-message ToClientContainer {
+message RequestContainer {
 
     // A tag to identify this "to client" message and relate it to the response in "from client" message.
     // The value 0 means "no identification", i.e. a specific response is not expected.
@@ -26,7 +26,7 @@ message ToClientContainer {
 
 // Generic container for any message that is sent from the headless client.
 // Every message sent from the client must be wrapped in this container.
-message FromClientContainer {
+message ResponseContainer {
 
     // A tag to identify which "to client" message this belongs to.
     // The value 0 means "no identification", i.e. the message does not relate to a request.
