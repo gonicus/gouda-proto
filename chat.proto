@@ -19,8 +19,6 @@ message RequestContainer {
         BuddyListRequest buddyListRequest = 6;
         RoomListRequest roomListRequest = 7;
         ToggleReactionRequest toggleReactionRequest = 8;
-
-        StatusUpdate statusUpdate = 256;
     }
 }
 
@@ -43,6 +41,7 @@ message ResponseContainer {
         BuddyListResponse buddyListResponse = 8;
         RoomListResponse roomListResponse = 9;
         ReactionEvent reactionEvent = 10;
+        StatusUpdate statusUpdate = 11;
     }
 }
 
