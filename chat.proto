@@ -62,6 +62,9 @@ message Error {
 
         // Whenever the required authorization is missing.
         Authorization = 3;
+
+        // The requested feature is not implemented for this client.
+        NotImplemented = 4;
     };
 
     // The type of this error.
