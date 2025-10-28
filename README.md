@@ -2,7 +2,7 @@
 
 ## Git pre-commit hook
 
-Add this as excutable file `.git/hooks/pre-commit`:
+Add this as executable file `.git/hooks/pre-commit`:
 
 ```sh
 #!/usr/bin/sh
