@@ -57,7 +57,7 @@ message Error {
         // When a response was not received in a pre-defined time.
         Timeout = 1;
 
-        // The error happend with the network connection or failing transport.
+        // The error happened with the network connection or failing transport.
         Network = 2;
 
         // Whenever the required authorization is missing.
@@ -154,7 +154,7 @@ message MessageReceivedEvent {
     Message messageContent = 1;
 }
 
-// Request the backend to retract and delete an exisiting message.
+// Request the backend to retract and delete an existing message.
 // Must result in an Error or RemoveMessageEvent.
 message RemoveMessageRequest {
 
@@ -208,7 +208,7 @@ message ToggleReactionRequest {
 
 // Sent when a reaction was added, removed or has changed in any other way.
 // Changes triggered by the user themself are included.
-// An empty participantList means that this reaction is not vald anymore.
+// An empty participantList means that this reaction is not valid anymore.
 message ReactionEvent {
 
     // The reaction information.
@@ -231,7 +231,7 @@ message Room {
     // Unique string identifying the room.
     string roomId = 1;
 
-    // Optional nice name to dipslay instead of the roomId.
+    // Optional nice name to display instead of the roomId.
     optional string displayName = 2;
 
     // All participants of this room.
