@@ -97,6 +97,10 @@ message Error {
 message InitializationRequest {
     // The URL of the backend to which a connection should be established.
     string backendUrl = 1;
+
+    // Path to a readable and writable folder in the system which serves as a
+    // root path for mutual data, like images.
+    string dataRootPath = 2;
 }
 
 // Request to retrieve the login flows supported by the backend.
