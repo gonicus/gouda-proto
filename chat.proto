@@ -13,9 +13,8 @@ message RequestContainer {
     // The payload; one of these requests.
     oneof content {
         CapabilityRequest capabilityRequest = 2;
-        SendOrEditMessageRequest sendOrEditMessageRequest = 3;
         RemoveMessageRequest removeMessageRequest = 4;
-        BuddyListRequest buddyListRequest = 6;
+        UserListRequest userListRequest = 6;
         RoomListRequest roomListRequest = 7;
         ToggleReactionRequest toggleReactionRequest = 8;
         InitializationRequest initializationRequest = 9;
@@ -23,10 +22,15 @@ message RequestContainer {
         UsernamePasswordLoginRequest usernamePasswordLoginRequest = 11;
         SSOLoginRequest ssoLoginRequest = 12;
         IdentityProvidersRequest identityProvidersRequest = 13;
+        UserSearchRequest userSearchRequest = 14;
+        InvitationRequest invitationRequest = 15;
+        InvitedReply invitedReply = 16;
+        Message sendMessageRequest = 17;
+        ChangeMessageRequest changeMessageRequest = 18;
     }
 
-    reserved 5;
-    reserved "loginRequest";
+    reserved 3, 5;
+    reserved "sendOrEditMessageRequest", "loginRequest";
 }
 
 // Generic container for any message that is sent from the headless client.
@@ -44,13 +48,16 @@ message ResponseContainer {
         SendMessageResponse sendMessageResponse = 5;
         RemoveMessageEvent removeMessageEvent = 6;
         MessageReceivedEvent messageReceivedEvent = 7;
-        BuddyListResponse buddyListResponse = 8;
+        UserListResponse userListResponse = 8;
         RoomListResponse roomListResponse = 9;
         ReactionEvent reactionEvent = 10;
         StatusUpdate statusUpdate = 11;
         LoginFlowsResponse loginFlowsResponse = 13;
         SSOLoginResponse ssoLoginResponse = 14;
         IdentityProvidersResponse identityProvidersResponse = 15;
+        UserSearchResponse userSearchResponse = 16;
+        InvitedEvent invitedEvent = 17;
+        RoomChangeEvent roomChangeEvent = 18;
     }
 
     reserved 4;
@@ -75,7 +82,8 @@ message Error {
         // Whenever the required authorization is missing.
         Authorization = 3;
 
-        // The requested feature is not implemented for this client.
+        // The requested feature is not implemented for this client. This should
+        // reflect in CapabilityResponse.
         NotImplemented = 4;
 
         // The client has not yet been initialized.
@@ -178,27 +186,36 @@ message CapabilityRequest { }
 // The capabilities (supported features) of the backend.
 message CapabilityResponse {
 
-    // The backend supports direct communication between two participants.
+    // The backend supports direct communication between two users.
     bool directRooms = 1;
 
-    // The backend supports chat rooms between multiple participants.
+    // The backend supports chat rooms between multiple users.
     bool groupRooms = 2;
 
     // The backend supports creation of sub threads inside a chat room.
     bool subThreads = 3;
 
+    // The backend supports searching for people known to the chat system.
+    bool userSearch = 5;
+
+    // The backend supports inviting users to rooms.
+    bool invitations = 6;
+
     // List of MIME types that can be send via the backend.
     repeated string mimeTypes = 4;
 }
 
-// Request to send a chat message.
-message SendOrEditMessageRequest {
+// Request changes to the content of an existing chat message.
+// A MessageReceivedEvent or an Error is expected to be received afterwards.
+message ChangeMessageRequest {
 
-    // The message that shall be sent or modified.
-    // If the messageId is not set, it means "send new message", an id is created and a SendMessageResponse is sent.
-    // If the messageId is set, it means "edit existing message". The information of the Message object will then
-    // be used to override the pre-existing information. MessageReceivedEvent is sent afterwards.
-    Message messageContent = 1;
+    // Id of the chat message that shall be changed.
+    string messageId = 1;
+
+    // The new content of the message.
+    // This field must not be empty. In order to remove a message, a
+    // RemoveMessageRequest must be made.
+    string newContent = 2;
 }
 
 // Confirms that a message has been sent.
@@ -209,7 +226,7 @@ message SendMessageResponse {
     string messageId = 1;
 }
 
-// Notifies about a received message from another participant or an edited message (by anyone).
+// Notifies about a received message from another user or an edited message (by anyone).
 message MessageReceivedEvent {
 
     // The actual message.
@@ -232,13 +249,13 @@ message RemoveMessageEvent {
 }
 
 // Request list of all known buddies.
-message BuddyListRequest {}
+message UserListRequest {}
 
-// Response for a buddy list request.
-message BuddyListResponse {
+// Response for a user list request.
+message UserListResponse {
 
     // List of buddies.
-    repeated Buddy buddyList = 1;
+    repeated User userList = 1;
 }
 
 // Request a list of rooms.
@@ -270,24 +287,33 @@ message ToggleReactionRequest {
 
 // Sent when a reaction was added, removed or has changed in any other way.
 // Changes triggered by the user themself are included.
-// An empty participantList means that this reaction is not valid anymore.
+// An empty userList means that this reaction is not valid anymore.
 message ReactionEvent {
 
     // The reaction information.
     Reaction reaction = 1;
 }
 
-// Describes a single buddy entity.
-message Buddy {
+// Describes a single user entity.
+message User {
 
-    // Unique string which identifies the buddy.
-    string buddyId = 1;
+    // Unique string which identifies the user.
+    string userId = 1;
 
-    // Optional nice name to display instead of the buddyId.
+    // Optional nice name to display instead of the userId.
     optional string displayName = 2;
 }
 
-// Describes a room entity. This might be a room with several participants or just a direct chat between two.
+// Possible states that a user can have in a room.
+enum UserRoomState {
+    Unjoined = 0;
+    Joined = 1;
+    Invited = 2;
+    Knocked = 3;
+    Banned = 4;
+}
+
+// Describes a room entity. This might be a room with several users or just a direct chat between two.
 message Room {
 
     // Unique string identifying the room.
@@ -296,8 +322,22 @@ message Room {
     // Optional nice name to display instead of the roomId.
     optional string displayName = 2;
 
-    // All participants of this room.
-    repeated Buddy participantList = 3;
+    // Ids of all users in this room with their current state, including our own user.
+    map<string, UserRoomState> userIdList = 3;
+}
+
+// Informs the client about changes in a single room.
+message RoomChangeEvent {
+
+    // The id of the room this change occurs.
+    string roomId = 1;
+
+    // User ids and their new state if they have changed. Users with unchanged
+    // must not appear in this list.
+    map<string, UserRoomState> userIdList = 2;
+
+    // List of ids of all users which are currently typing.
+    repeated UserRoomState typingUserIdList = 3;
 }
 
 // Describes a chat message.
@@ -310,7 +350,7 @@ message Message {
     // Id of the room this message is sent to.
     string roomId = 2;
 
-    // Id of the sender, which might be a participant or the room itself in case of room messages.
+    // Id of the sender, which might be a user or the room itself in case of room messages.
     string senderId = 3;
 
     // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
@@ -341,13 +381,60 @@ message Reaction {
 
     // List of all users that made this reaction, including the own user as well.
     // If this list is empty, it means that this reaction does not exist any longer.
-    repeated Buddy participantList = 3;
+    repeated User userList = 3;
 }
 
+// Describes a request to search for known buddies, i.e. accounts registered to
+// the chat backend. Only available if the capability userSearch is available.
+message UserSearchRequest {
 
+    // The search query string.
+    string query = 1;
 
-//Events
-//  * Einladung
-//  * Beitreten/Verlassen
-//  * Lesebestätigung
-//  * Tippt
+    // The maximum number of search results that shall be returned.
+    uint32 limit = 2;
+}
+
+// Response to a UserSearchRequest.
+message UserSearchResponse {
+
+    // List of users matching the search query.
+    repeated User userList = 1;
+}
+
+// Issue an invite to one or more buddies to join a chat room.
+// This is only available if the invitations capability is supported.
+// Sending an InvitationRequest without an invitee is insufficient.
+message InvitationRequest {
+
+    // The id of the room the users are invited to.
+    string roomId = 1;
+
+    // The list of buddies that shall be invited to the room.
+    // Must contain at least one user.
+    repeated User invitees = 2;
+
+    // Free text to display to the invitees together with the invitation.
+    optional string invitationText = 3;
+}
+
+// Received when another user invites this account to a chat room.
+message InvitedEvent {
+
+    // The id of the room this client is invited to.
+    string roomId = 1;
+
+    // Free text to display to the client together with the invitation.
+    optional string invitationText = 2;
+}
+
+// The client's answer to an Invited.
+message InvitedReply {
+
+    // Id of the room to where the client has been invited.
+    string roomId = 1;
+
+    // Whether the invitation is accepted or not. If it is, an update for the
+    // room list is expected.
+    bool accepted = 2;
+}
