@@ -89,8 +89,11 @@ message Error {
         // The client has not yet been initialized.
         NotInitialized = 5;
 
-        // A string that should have been formatted as a URL was not a valid URL.
+        // A string that should have been formatted as an URL was not a valid URL.
         InvalidUrl = 6;
+    
+        // The room with the requested ID was not found.
+        RoomNotFound = 7;
     };
 
     // The type of this error.
