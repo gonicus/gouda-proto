@@ -27,6 +27,7 @@ message RequestContainer {
         InvitedReply invitedReply = 16;
         Message sendMessageRequest = 17;
         ChangeMessageRequest changeMessageRequest = 18;
+        RoomMessagesRequest roomMessagesRequest = 19;
     }
 
     reserved 3, 5;
@@ -58,6 +59,7 @@ message ResponseContainer {
         UserSearchResponse userSearchResponse = 16;
         InvitedEvent invitedEvent = 17;
         RoomChangeEvent roomChangeEvent = 18;
+        RoomMessagesResponse roomMessagesResponse = 19;
     }
 
     reserved 4;
@@ -91,7 +93,7 @@ message Error {
 
         // A string that should have been formatted as an URL was not a valid URL.
         InvalidUrl = 6;
-    
+
         // The room with the requested ID was not found.
         RoomNotFound = 7;
     };
@@ -204,6 +206,9 @@ message CapabilityResponse {
     // The backend supports inviting users to rooms.
     bool invitations = 6;
 
+    // The backend supports spaces as logical groups of rooms.
+    bool spaces = 7;
+
     // List of MIME types that can be send via the backend.
     repeated string mimeTypes = 4;
 }
@@ -251,13 +256,13 @@ message RemoveMessageEvent {
     string messageId = 1;
 }
 
-// Request list of all known buddies.
+// Request list of all known users.
 message UserListRequest {}
 
 // Response for a user list request.
 message UserListResponse {
 
-    // List of buddies.
+    // List of users.
     repeated User userList = 1;
 }
 
@@ -307,6 +312,16 @@ message User {
     optional string displayName = 2;
 }
 
+// A space describes a logical group of chat rooms.
+message Space {
+
+    // Unique identifier of the space.
+    string spaceId = 1;
+
+    // User-friendly display name for the space.
+    string displayName = 2;
+}
+
 // Possible states that a user can have in a room.
 enum UserRoomState {
     Unjoined = 0;
@@ -327,6 +342,11 @@ message Room {
 
     // Ids of all users in this room with their current state, including our own user.
     map<string, UserRoomState> userIdList = 3;
+
+    // Ids of the spaces this room belongs to.
+    // This is only to be set if the backend supports the spaces capability and
+    // the room actually belongs to at least one space.
+    repeated string spaceId = 4;
 }
 
 // Informs the client about changes in a single room.
@@ -340,7 +360,7 @@ message RoomChangeEvent {
     map<string, UserRoomState> userIdList = 2;
 
     // List of ids of all users which are currently typing.
-    repeated UserRoomState typingUserIdList = 3;
+    repeated string typingUserIdList = 3;
 }
 
 // Describes a chat message.
@@ -387,7 +407,35 @@ message Reaction {
     repeated User userList = 3;
 }
 
-// Describes a request to search for known buddies, i.e. accounts registered to
+// Request multiple consecutive messages of a room.
+// The request should usually be used paginated, i.e. with a reasonable limit set.
+message RoomMessagesRequest {
+
+    // Id of the room for which messages shall be fetched.
+    string roomId = 1;
+
+    // The result must start at the message that is the immediate predecessor
+    // to the one specified by this id, if available. If this field is not set,
+    // the result must begin at the latest message.
+    optional string fromMessageId = 2;
+
+    // Id of the latest message that should be contained in the result. If the
+    // limit field is set as well, the resulting list must be limited at
+    // whatever applies first - the toMessageId or the limit.
+    optional string toMessageId = 3;
+
+    // Maximum number of messages that should be contained in the resulting
+    // list. If the toMessageId field is set as well, the resulting list must
+    // be limited at whatever applies first - the toMessageId or the limit.
+    optional uint32 limit = 4;
+}
+
+// Response to a RoomMessagesRequest containing a list of messages.
+message RoomMessagesResponse {
+    repeated Message messageList = 1;
+}
+
+// Describes a request to search for known users, i.e. accounts registered to
 // the chat backend. Only available if the capability userSearch is available.
 message UserSearchRequest {
 
@@ -405,7 +453,7 @@ message UserSearchResponse {
     repeated User userList = 1;
 }
 
-// Issue an invite to one or more buddies to join a chat room.
+// Issue an invite to one or more users to join a chat room.
 // This is only available if the invitations capability is supported.
 // Sending an InvitationRequest without an invitee is insufficient.
 message InvitationRequest {
@@ -413,9 +461,9 @@ message InvitationRequest {
     // The id of the room the users are invited to.
     string roomId = 1;
 
-    // The list of buddies that shall be invited to the room.
+    // The list of ids of users that shall be invited to the room.
     // Must contain at least one user.
-    repeated User invitees = 2;
+    repeated string invitees = 2;
 
     // Free text to display to the invitees together with the invitation.
     optional string invitationText = 3;
@@ -426,6 +474,9 @@ message InvitedEvent {
 
     // The id of the room this client is invited to.
     string roomId = 1;
+
+    // Display name of the room.
+    string roomDisplayName = 3;
 
     // Free text to display to the client together with the invitation.
     optional string invitationText = 2;
