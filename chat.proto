@@ -368,6 +368,9 @@ message Room {
     // The current presence state. Must be set if hasPresenceInfo is true and
     // must not be set if presence info is false.
     optional PresenceState presenceState = 6;
+
+    // Whether this room can be found and joined without invitation.
+    bool isPublic = 7;
 }
 
 // Informs the client about changes in a single room.
