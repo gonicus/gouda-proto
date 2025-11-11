@@ -28,6 +28,7 @@ message RequestContainer {
         Message sendMessageRequest = 17;
         ChangeMessageRequest changeMessageRequest = 18;
         RoomMessagesRequest roomMessagesRequest = 19;
+        MarkAsReadRequest markAsReadRequest = 20;
     }
 
     reserved 3, 5;
@@ -60,7 +61,6 @@ message ResponseContainer {
         InvitedEvent invitedEvent = 17;
         RoomChangeEvent roomChangeEvent = 18;
         RoomMessagesResponse roomMessagesResponse = 19;
-        MarkAsReadRequest markAsReadRequest = 20;
     }
 
     reserved 4;
