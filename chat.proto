@@ -363,9 +363,9 @@ message Room {
     repeated string spaceId = 4;
 
     // Whether this room has information about presence of other participant(s).
-    bool hasPresenceInfo = 5;
+    bool hasPresenceState = 5;
 
-    // The current presence state. Must be set if hasPresenceInfo is true and
+    // The current presence state. Must be set if hasPresenceState is true and
     // must not be set if presence info is false.
     optional PresenceState presenceState = 6;
 
