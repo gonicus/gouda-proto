@@ -338,6 +338,13 @@ enum UserRoomState {
     Banned = 4;
 }
 
+enum PresenceState {
+    Unknown = 0;
+    Offline = 1;
+    Away = 2;
+    Online = 3;
+}
+
 // Describes a room entity. This might be a room with several users or just a direct chat between two.
 message Room {
 
@@ -354,6 +361,13 @@ message Room {
     // This is only to be set if the backend supports the spaces capability and
     // the room actually belongs to at least one space.
     repeated string spaceId = 4;
+
+    // Whether this room has information about presence of other participant(s).
+    bool hasPresenceInfo = 5;
+
+    // The current presence state. Must be set if hasPresenceInfo is true and
+    // must not be set if presence info is false.
+    optional PresenceState presenceState = 6;
 }
 
 // Informs the client about changes in a single room.
@@ -363,11 +377,14 @@ message RoomChangeEvent {
     string roomId = 1;
 
     // User ids and their new state if they have changed. Users with unchanged
-    // must not appear in this list.
+    // state must not appear in this list.
     map<string, UserRoomState> userIdList = 2;
 
     // List of ids of all users which are currently typing.
     repeated string typingUserIdList = 3;
+
+    // New presence state of this room.
+    optional PresenceState presenceState = 4;
 }
 
 // Describes a chat message.
