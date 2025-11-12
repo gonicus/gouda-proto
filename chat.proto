@@ -28,6 +28,7 @@ message RequestContainer {
         Message sendMessageRequest = 17;
         ChangeMessageRequest changeMessageRequest = 18;
         RoomMessagesRequest roomMessagesRequest = 19;
+        MarkAsReadRequest markAsReadRequest = 20;
     }
 
     reserved 3, 5;
@@ -60,6 +61,7 @@ message ResponseContainer {
         InvitedEvent invitedEvent = 17;
         RoomChangeEvent roomChangeEvent = 18;
         RoomMessagesResponse roomMessagesResponse = 19;
+        UserChangeEvent userChangeEvent = 20;
     }
 
     reserved 4;
@@ -317,6 +319,18 @@ message User {
 
     // Optional nice name to display instead of the userId.
     optional string displayName = 2;
+
+    // The current presence state of the user.
+    optional PresenceState presenceState = 5;
+}
+
+message UserChangeEvent {
+    // The ID of the user this change occurs.
+    string userId = 1;
+
+    // New presence state of the user.
+    // If not set the presence state did not change.
+    optional PresenceState presenceState = 2;
 }
 
 // A space describes a logical group of chat rooms.
@@ -338,6 +352,13 @@ enum UserRoomState {
     Banned = 4;
 }
 
+enum PresenceState {
+    Unknown = 0;
+    Offline = 1;
+    Away = 2;
+    Online = 3;
+}
+
 // Describes a room entity. This might be a room with several users or just a direct chat between two.
 message Room {
 
@@ -354,6 +375,12 @@ message Room {
     // This is only to be set if the backend supports the spaces capability and
     // the room actually belongs to at least one space.
     repeated string spaceId = 4;
+
+    // Whether this room can be found and joined without invitation.
+    bool isPublic = 6;
+
+    // Number of unread messages and notifications in this room.
+    uint32 unreadCount = 7;
 }
 
 // Informs the client about changes in a single room.
@@ -363,11 +390,21 @@ message RoomChangeEvent {
     string roomId = 1;
 
     // User ids and their new state if they have changed. Users with unchanged
-    // must not appear in this list.
+    // state must not appear in this list.
     map<string, UserRoomState> userIdList = 2;
 
     // List of ids of all users which are currently typing.
     repeated string typingUserIdList = 3;
+
+    // Updated number of unread messages and notifications in this room.
+    optional uint32 unreadCount = 5;
+}
+
+// Notify the client that messages and notifications in this room have been
+// read by the user.
+// Expects a RoomChangeEvent with unreadCount = 0 in return.
+message MarkAsReadRequest {
+    string roomId = 1;
 }
 
 // Describes a chat message.
