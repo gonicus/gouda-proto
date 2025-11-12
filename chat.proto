@@ -364,7 +364,7 @@ message Room {
     repeated string spaceId = 4;
 
     // The current presence state. If this is set it implicitly means that the
-    // room carries presence information, even if set to unknwon.
+    // room carries presence information, even if set to unknown.
     // Not setting this field at all indicates that the room does not have
     // presence information.
     optional PresenceState presenceState = 5;
