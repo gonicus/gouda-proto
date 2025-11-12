@@ -61,6 +61,7 @@ message ResponseContainer {
         InvitedEvent invitedEvent = 17;
         RoomChangeEvent roomChangeEvent = 18;
         RoomMessagesResponse roomMessagesResponse = 19;
+        UserChangeEvent userChangeEvent = 20;
     }
 
     reserved 4;
@@ -318,6 +319,18 @@ message User {
 
     // Optional nice name to display instead of the userId.
     optional string displayName = 2;
+
+    // The current presence state of the user.
+    optional PresenceState presenceState = 5;
+}
+
+message UserChangeEvent {
+    // The ID of the user this change occurs.
+    string userId = 1;
+
+    // New presence state of the user.
+    // If not set the presence state did not change.
+    optional PresenceState presenceState = 2;
 }
 
 // A space describes a logical group of chat rooms.
@@ -363,12 +376,6 @@ message Room {
     // the room actually belongs to at least one space.
     repeated string spaceId = 4;
 
-    // The current presence state. If this is set it implicitly means that the
-    // room carries presence information, even if set to unknown.
-    // Not setting this field at all indicates that the room does not have
-    // presence information.
-    optional PresenceState presenceState = 5;
-
     // Whether this room can be found and joined without invitation.
     bool isPublic = 6;
 
@@ -388,9 +395,6 @@ message RoomChangeEvent {
 
     // List of ids of all users which are currently typing.
     repeated string typingUserIdList = 3;
-
-    // New presence state of this room.
-    optional PresenceState presenceState = 4;
 
     // Updated number of unread messages and notifications in this room.
     optional uint32 unreadCount = 5;
