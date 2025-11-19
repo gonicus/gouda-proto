@@ -29,6 +29,11 @@ message RequestContainer {
         ChangeMessageRequest changeMessageRequest = 18;
         RoomMessagesRequest roomMessagesRequest = 19;
         MarkAsReadRequest markAsReadRequest = 20;
+        RecoveryKeyVerificationRequest recoveryKeyVerificationRequest = 21;
+        CrossSigningStartRequest crossSigningStartRequest = 22;
+        CrossSigningMethodSelectedRequest crossSigningMethodSelectedRequest = 23;
+        CrossSigningAcceptRequest crossSigningAcceptRequest = 24;
+        VerificationAbortRequest verificationAbortRequest = 25;
     }
 
     reserved 3, 5;
@@ -62,6 +67,10 @@ message ResponseContainer {
         RoomChangeEvent roomChangeEvent = 18;
         RoomMessagesResponse roomMessagesResponse = 19;
         UserChangeEvent userChangeEvent = 20;
+        CrossSigningPromptEvent crossSigningPromptEvent = 21;
+        CrossSigningStartEvent crossSigningStartEvent = 22;
+        CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 23;
+        VerificationEndEvent verificationEndEvent = 24;
     }
 
     reserved 4;
@@ -125,12 +134,134 @@ message InitializationRequest {
     string encryptionSecret = 4;
 }
 
+// Different types of cross signing verification methods.
+enum crossSigningMethod {
+
+    // A simple string.
+    SasString = 0;
+
+    // A sequence of symbols (e.g. emojis).
+    SasSymbol = 1;
+}
+
+// Try to verify this device with the givenrecovery key.
+// Espects a VerificationEndEvent afterwards.
+message RecoveryKeyVerificationRequest {
+    string recoveryKey = 1;
+}
+
+// Another device wants to verify this one.
+// The client is expected to send either a CrossSigningStartRequest in order to
+// accept the prompt, or a VerificationAbortRequest to reject it.
+message CrossSigningPromptEvent {
+
+    // Identifier for the verification flow id.
+    string verificationFlowId = 1;
+}
+
+// The client declares it likes to start a cross signing verification process.
+// A CrossSigningStartEvent is expected to be received next.
+message CrossSigningStartRequest {
+
+    // Id of the flow if responding to a CrossSigningPromptEvent. If such did
+    // not happen, this field must be omitted.
+    optional string verificationFlowId = 1;
+
+    // All cross signing methods this client supports. It must not be empty.
+    repeated crossSigningMethod supportedMethods = 2;
+}
+
+// The backend declares it the cross signing verification flow has started.
+// The headless client either expects a CrossSigningMethodSelectRequest next or
+// will send a CrossSigningMethodSelectedEvent when another client has selected
+// a method sooner.
+message CrossSigningStartEvent {
+    string verificationFlowId = 1;
+
+    // List of cross signing methods that are available among all clients and
+    // the backend. One of this must be chosen to proceed. Must not be empty.
+    repeated crossSigningMethod availableMethods = 2;
+}
+
+// Send in response to a CrossSigningStartEvent to select the cross signing
+// method. A CrossSigningMethodSelectedEvent is expected in return.
+message CrossSigningMethodSelectedRequest {
+    string verificationFlowId = 1;
+
+    // The selected method. Must be one of those received in the according
+    // CrossSigningStartEvent.
+    crossSigningMethod selectedMethod = 2;
+}
+
+// Propagates the method selected for the cross signing process. Must be
+// followed by either a CrossSigningAcceptRequest or a
+// VerificationAbortRequest.
+message CrossSigningMethodSelectedEvent {
+    string verificationFlowId = 1;
+    crossSigningMethod selectedMethod = 2;
+
+    // Code to match for the verification. Depends on the selected method.
+    oneof verificationCode {
+
+        // A simple string for the SasString method.
+        string stringCode = 3;
+
+        // A sequence of symbols for the SasSymbol method.
+        VerificationSymbolSequence symbols = 4;
+    }
+}
+
+// Accepts the verification. Must be followed by VerificationEndEvent.
+message CrossSigningAcceptRequest {
+    string verificationFlowId = 1;
+}
+
+// Sequence of VerificationSymbol.
+message VerificationSymbolSequence {
+    repeated VerificationSymbol symbols = 1;
+}
+
+// A single symbol for the SasSymbol verification method.
+message VerificationSymbol {
+
+    // The symbol itself (e.g. emoji).
+    string symbol = 1;
+
+    // Optional description to be shown with the symbol.
+    optional string description = 2;
+}
+
+// This client wants to abort the verification process. Is expected to be
+// followed by a VerificationEndEvent.
+message VerificationAbortRequest {
+    string verificationFlowId = 1;
+}
+
+// Send when the verification process has ended, because it was either
+// successful, or cancelled or errorneous.
+message VerificationEndEvent {
+
+    // Id of the verification flow. Might be omitted if this is a direct final
+    // response to the process such that no id was known before.
+    optional string verificationFlowId = 1;
+
+    oneof result {
+        // Whether the verification has ended successfully or was aborted.
+        bool successful = 2;
+
+        // Verification has ended with an error; this is an error message.
+        string error = 3;
+    }
+}
+
 // Request to retrieve the login flows supported by the backend.
 message LoginFlowsRequest { }
 
 // Returns the login flows supported by the backend.
 message LoginFlowsResponse {
+
     enum loginFlow {
+
         // If the backend supports username and password authentication.
         UsernamePassword = 0;
 
@@ -188,6 +319,11 @@ message StatusUpdate {
 
         // The server is connected and the client is authorized.
         LoggedIn = 2;
+
+        // Additionally to LoggedIn, the client is also verified. If the system
+        // does not support verification, this state is semantically equal to
+        // LoggedIn.
+        LoggedInVerified = 3;
     };
 
     // The current connection status.
@@ -217,6 +353,11 @@ message CapabilityResponse {
 
     // The backend supports spaces as logical groups of rooms.
     bool spaces = 7;
+
+    // The protocol has a verification process for clients. This does neither
+    // mean that the backend actually supports it, nor that the client
+    // actually requires verification.
+    bool clientVerification = 8;
 
     // List of MIME types that can be send via the backend.
     repeated string mimeTypes = 4;
