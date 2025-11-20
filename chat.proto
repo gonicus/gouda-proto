@@ -6,8 +6,9 @@ package de.gonicus.gonnect;
 // Every message sent to the client must be wrapped in this container.
 message RequestContainer {
 
-    // A tag to identify this "to client" message and relate it to the response in "from client" message.
-    // The value 0 means "no identification", i.e. a specific response is not expected.
+    // A tag to identify this "to client" message and relate it to the response
+    // in "from client" message. The value 0 means "no identification", i.e. a
+    // specific response is not expected.
     uint64 tag = 1;
 
     // The payload; one of these requests.
@@ -40,7 +41,8 @@ message RequestContainer {
 message ResponseContainer {
 
     // A tag to identify which "to client" message this belongs to.
-    // The value 0 means "no identification", i.e. the message does not relate to a request.
+    // The value 0 means "no identification", i.e. the message does not relate
+    // to a request.
     uint64 tag = 1;
 
     // The payload; one of these requests.
@@ -73,8 +75,9 @@ message Error {
 
     enum errorType {
 
-        // An error that cannot be described by any of the other values or its nature is unknown.
-        // Using one of the other more specific error type is preferred.
+        // An error that cannot be described by any of the other values or its
+        // nature is unknown. Using one of the other more specific error type is
+        // preferred.
         Unknown = 0;
 
         // When a response was not received in a pre-defined time.
@@ -93,7 +96,8 @@ message Error {
         // The client has not yet been initialized.
         NotInitialized = 5;
 
-        // A string that should have been formatted as an URL was not a valid URL.
+        // A string that should have been formatted as an URL was not a valid
+        // URL.
         InvalidUrl = 6;
 
         // The room with the requested ID was not found.
@@ -143,15 +147,16 @@ message LoginFlowsResponse {
 }
 
 // Request to log in to the client using username and password.
-// Use LoginFlowsRequest to ensure that the backend supports this authentication method.
-// A StatusUpdate is returned when the login request was successful.
+// Use LoginFlowsRequest to ensure that the backend supports this authentication
+// method. A StatusUpdate is returned when the login request was successful.
 message UsernamePasswordLoginRequest {
     string username = 1;
     string password = 2;
 }
 
 // Request to log in to the client using single sign-on.
-// Use LoginFlowsRequest to ensure that the backend supports this authentication method.
+// Use LoginFlowsRequest to ensure that the backend supports this authentication
+// method.
 message SSOLoginRequest {
     // The identity provider to be used for login.
     // Use IdentityProviderRequest to retrieve the available identity providers.
@@ -159,13 +164,15 @@ message SSOLoginRequest {
 }
 
 // Confirms the single sign-on authentication was initiated.
-// A StatusUpdate is returned when the login request was successful and the access token was retrieved.
+// A StatusUpdate is returned when the login request was successful and the
+// access token was retrieved.
 message SSOLoginResponse {
     // A url that must be opened in a web browser to continue the login process.
     string loginUrl = 1;
 }
 
-// Request to retrieve the available identity providers for single sing-on authentication.
+// Request to retrieve the available identity providers for single sing-on
+// authentication.
 message IdentityProvidersRequest { }
 
 // Returns the available identity providers.
@@ -175,7 +182,8 @@ message IdentityProvidersResponse {
     repeated string identityProviders = 1;
 }
 
-// Notifies about changes in the connection state between headless client and backend.
+// Notifies about changes in the connection state between headless client and
+// backend.
 message StatusUpdate {
 
     enum statusCode {
@@ -236,14 +244,16 @@ message ChangeMessageRequest {
 }
 
 // Confirms that a message has been sent.
-// A MessageReceivedEvent will not be created for messages that have been sent via this client.
+// A MessageReceivedEvent will not be created for messages that have been sent
+// via this client.
 message SendMessageResponse {
 
     // Unique id to identify the message (e.g. for later modification).
     string messageId = 1;
 }
 
-// Notifies about a received message from another user or an edited message (by anyone).
+// Notifies about a received message from another user or an edited message (by
+// anyone).
 message MessageReceivedEvent {
 
     // The actual message.
@@ -278,10 +288,12 @@ message UserListResponse {
 // Request a list of rooms.
 message RoomListRequest {
 
-    // Whether the resulting list shall include room which the user is a member of.
+    // Whether the resulting list shall include room which the user is a member
+    // of.
     bool includeJoined = 1;
 
-    // Whether the resulting list shall include room which the user is not a member of.
+    // Whether the resulting list shall include room which the user is not a
+    // member of.
     bool includeUnjoined = 2;
 }
 
@@ -359,7 +371,8 @@ enum PresenceState {
     Online = 3;
 }
 
-// Describes a room entity. This might be a room with several users or just a direct chat between two.
+// Describes a room entity. This might be a room with several users or just a
+// direct chat between two.
 message Room {
 
     // Unique string identifying the room.
@@ -368,7 +381,8 @@ message Room {
     // Optional nice name to display instead of the roomId.
     optional string displayName = 2;
 
-    // Ids of all users in this room with their current state, including our own user.
+    // Ids of all users in this room with their current state, including our own
+    // user.
     map<string, UserRoomState> userIdList = 3;
 
     // Ids of the spaces this room belongs to.
@@ -411,13 +425,15 @@ message MarkAsReadRequest {
 message Message {
 
     // Unique string identifying the message.
-    // If the id is set by the backend, this field might be missing when sending a new message.
+    // If the id is set by the backend, this field might be missing when sending
+    // a new message.
     optional string messageId = 1;
 
     // Id of the room this message is sent to.
     string roomId = 2;
 
-    // Id of the sender, which might be a user or the room itself in case of room messages.
+    // Id of the sender, which might be a user or the room itself in case of
+    // room messages.
     string senderId = 3;
 
     // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
@@ -429,7 +445,8 @@ message Message {
     // The actual payload of the message. Encoding depends on mimeType.
     string content = 6;
 
-    // The original message this relates to, e.g. when answering to a specific message.
+    // The original message this relates to, e.g. when answering to a specific
+    // message.
     optional string relatedMessageId = 7;
 
     // Whether this message is pinned, i.e. prominently shown in the room.
@@ -446,13 +463,15 @@ message Reaction {
     // The actual reaction (e.g. emoji).
     string reaction = 2;
 
-    // List of all users that made this reaction, including the own user as well.
-    // If this list is empty, it means that this reaction does not exist any longer.
+    // List of all users that made this reaction, including the own user as
+    // well. If this list is empty, it means that this reaction does not exist
+    // any longer.
     repeated User userList = 3;
 }
 
 // Request multiple consecutive messages of a room.
-// The request should usually be used paginated, i.e. with a reasonable limit set.
+// The request should usually be used paginated, i.e. with a reasonable limit
+// set.
 message RoomMessagesRequest {
 
     // Id of the room for which messages shall be fetched.
