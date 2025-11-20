@@ -67,10 +67,11 @@ message ResponseContainer {
         RoomChangeEvent roomChangeEvent = 18;
         RoomMessagesResponse roomMessagesResponse = 19;
         UserChangeEvent userChangeEvent = 20;
-        CrossSigningPromptEvent crossSigningPromptEvent = 21;
-        CrossSigningStartEvent crossSigningStartEvent = 22;
-        CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 23;
-        VerificationEndEvent verificationEndEvent = 24;
+        VerificationStatusEvent verificationStatusEvent = 21;
+        CrossSigningPromptEvent crossSigningPromptEvent = 22;
+        CrossSigningStartEvent crossSigningStartEvent = 23;
+        CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 24;
+        VerificationEndEvent verificationEndEvent = 25;
     }
 
     reserved 4;
@@ -132,6 +133,23 @@ message InitializationRequest {
     // Secret the client can use for encryption and decryption of arbitrary
     // data.
     string encryptionSecret = 4;
+}
+
+// Send when the verification status or related information has changed. Must
+// be sent at least once if CapabilityResponse.clientVerification is true. If
+// that is not true, it must not be sent at all.
+message VerificationStatusEvent {
+
+    // Whether this client/device is verified.
+    bool isVerified = 1;
+
+    // Whether this client/device can verify itself by sending a recovery key
+    // via RecoveryKeyVerificationRequest.
+    bool isRecoveryKeyVerificationAvailable = 2;
+
+    // Whether an unverified device can currently be verified via
+    // cross-signing.
+    bool isCrossSigningAvailable = 3;
 }
 
 // Different types of cross signing verification methods.
@@ -319,11 +337,6 @@ message StatusUpdate {
 
         // The server is connected and the client is authorized.
         LoggedIn = 2;
-
-        // Additionally to LoggedIn, the client is also verified. If the system
-        // does not support verification, this state is semantically equal to
-        // LoggedIn.
-        LoggedInVerified = 3;
     };
 
     // The current connection status.
