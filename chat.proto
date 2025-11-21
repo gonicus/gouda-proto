@@ -26,7 +26,7 @@ message RequestContainer {
         UserSearchRequest userSearchRequest = 14;
         InvitationRequest invitationRequest = 15;
         InvitedReply invitedReply = 16;
-        Message sendMessageRequest = 17;
+        SendMessageRequest sendMessageRequest = 17;
         ChangeMessageRequest changeMessageRequest = 18;
         RoomMessagesRequest roomMessagesRequest = 19;
         MarkAsReadRequest markAsReadRequest = 20;
@@ -380,8 +380,28 @@ message CapabilityResponse {
     // actually requires verification.
     bool clientVerification = 8;
 
+    // The backend supports a presence state for users.
+    bool userPresence = 9;
+
     // List of MIME types that can be send via the backend.
     repeated string mimeTypes = 4;
+}
+
+// Request to send a chat message.
+message SendMessageRequest {
+
+    // Id of the room this message is sent to.
+    string roomId = 1;
+
+    // The MIME type of the content.
+    string mimeType = 2;
+
+    // The actual payload of the message. Encoding depends on mimeType.
+    string content = 3;
+
+    // The original message this relates to, e.g. when answering to a specific
+    // message.
+    optional string relatedMessageId = 4;
 }
 
 // Request changes to the content of an existing chat message.
@@ -486,7 +506,8 @@ message User {
     // Optional nice name to display instead of the userId.
     optional string displayName = 2;
 
-    // The current presence state of the user.
+    // The current presence state of the user. May only be set when userPresence
+    // capability is set.
     optional PresenceState presenceState = 5;
 }
 
@@ -494,8 +515,8 @@ message UserChangeEvent {
     // The ID of the user this change occurs.
     string userId = 1;
 
-    // New presence state of the user.
-    // If not set the presence state did not change.
+    // New presence state of the user. If not set the presence state did not
+    // change. May only be set when userPresence capability is set.
     optional PresenceState presenceState = 2;
 }
 
