@@ -13,7 +13,6 @@ message RequestContainer {
 
     // The payload; one of these requests.
     oneof content {
-        CapabilityRequest capabilityRequest = 2;
         RemoveMessageRequest removeMessageRequest = 4;
         UserListRequest userListRequest = 6;
         RoomListRequest roomListRequest = 7;
@@ -37,8 +36,8 @@ message RequestContainer {
         VerificationAbortRequest verificationAbortRequest = 25;
     }
 
-    reserved 3, 5;
-    reserved "sendOrEditMessageRequest", "loginRequest";
+    reserved 2, 3, 5;
+    reserved "capabilityRequest", "sendOrEditMessageRequest", "loginRequest";
 }
 
 // Generic container for any message that is sent from the headless client.
@@ -53,7 +52,6 @@ message ResponseContainer {
     // The payload; one of these requests.
     oneof content {
         Error error = 2;
-        CapabilityResponse capabilityResponse = 3;
         SendMessageResponse sendMessageResponse = 5;
         RemoveMessageEvent removeMessageEvent = 6;
         MessageReceivedEvent messageReceivedEvent = 7;
@@ -74,10 +72,12 @@ message ResponseContainer {
         CrossSigningStartEvent crossSigningStartEvent = 23;
         CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 24;
         VerificationEndEvent verificationEndEvent = 25;
+        CapabilityEvent capabilityEvent = 26;
+        CrossSigningStartResponse crossSigningStartResponse = 27;
     }
 
-    reserved 4;
-    reserved "loginResponse";
+    reserved 3, 4;
+    reserved "capabilityResponse", "loginResponse";
 }
 
 // Generic error occurred in the backend or the headless client.
@@ -112,6 +112,9 @@ message Error {
 
         // The room with the requested ID was not found.
         RoomNotFound = 7;
+
+        // The verification flow with the requested ID was not found.
+        VerificationFlowNotFound = 8;
     };
 
     // The type of this error.
@@ -167,7 +170,7 @@ enum crossSigningMethod {
 }
 
 // Try to verify this device with the givenrecovery key.
-// Espects a VerificationEndEvent afterwards.
+// Expects a VerificationEndEvent afterwards.
 message RecoveryKeyVerificationRequest {
     string recoveryKey = 1;
 }
@@ -182,7 +185,7 @@ message CrossSigningPromptEvent {
 }
 
 // The client declares it likes to start a cross signing verification process.
-// A CrossSigningStartEvent is expected to be received next.
+// A CrossSigningStartResponse is expected to be received next.
 message CrossSigningStartRequest {
 
     // Id of the flow if responding to a CrossSigningPromptEvent. If such did
@@ -191,6 +194,12 @@ message CrossSigningStartRequest {
 
     // All cross signing methods this client supports. It must not be empty.
     repeated crossSigningMethod supportedMethods = 2;
+}
+
+// Confirms a new cross signing flow was started.
+message CrossSigningStartResponse {
+    // The ID  of the newly created verification flow.
+    string verificationFlowId = 1;
 }
 
 // The backend declares it the cross signing verification flow has started.
@@ -260,7 +269,7 @@ message VerificationAbortRequest {
 }
 
 // Send when the verification process has ended, because it was either
-// successful, or cancelled or errorneous.
+// successful, or cancelled or erroneous.
 message VerificationEndEvent {
 
     // Id of the verification flow. Might be omitted if this is a direct final
@@ -355,7 +364,7 @@ message StatusUpdate {
 message CapabilityRequest { }
 
 // The capabilities (supported features) of the backend.
-message CapabilityResponse {
+message CapabilityEvent {
 
     // The backend supports direct communication between two users.
     bool directRooms = 1;
