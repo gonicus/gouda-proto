@@ -115,6 +115,9 @@ message Error {
 
         // The verification flow with the requested ID was not found.
         VerificationFlowNotFound = 8;
+
+        // The given recovery key is invalid.
+        InvalidRecoveryKey = 9;
     };
 
     // The type of this error.
