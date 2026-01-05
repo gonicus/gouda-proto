@@ -34,6 +34,8 @@ message RequestContainer {
         CrossSigningMethodSelectedRequest crossSigningMethodSelectedRequest = 23;
         CrossSigningAcceptRequest crossSigningAcceptRequest = 24;
         VerificationAbortRequest verificationAbortRequest = 25;
+        CreateGroupRoomRequest createGroupRoomRequest = 26;
+        CreateDirectRoomRequest createDirectRoomRequest = 27;
     }
 
     reserved 2, 3, 5;
@@ -74,6 +76,7 @@ message ResponseContainer {
         VerificationEndEvent verificationEndEvent = 25;
         CapabilityEvent capabilityEvent = 26;
         CrossSigningStartResponse crossSigningStartResponse = 27;
+        CreateRoomResponse createRoomResponse = 28;
     }
 
     reserved 3, 4;
@@ -585,6 +588,9 @@ message Room {
 
     // Number of unread messages and notifications in this room.
     uint32 unreadCount = 7;
+
+    // If the room is a direct room or group room.
+    bool isDirect = 8;
 }
 
 // Informs the client about changes in a single room.
@@ -744,4 +750,33 @@ message InvitedReply {
     // Whether the invitation is accepted or not. If it is, an update for the
     // room list is expected.
     bool accepted = 2;
+}
+
+// Request to create a new room that multiple users can join.
+// Expects a CreateRoomResponse next.
+message CreateGroupRoomRequest {
+
+    // Optional nice name to display instead of the roomId.
+    optional string displayName = 1;
+
+    // The IDs of the users who should be invited to the new group room.
+    repeated string invitees = 2;
+}
+
+// Request to create a new room that only one user can join.
+// Expects a CreateRoomResponse next.
+message CreateDirectRoomRequest {
+
+    // Optional nice name to display instead of the roomId or the other person's name.
+    optional string displayName = 1;
+
+    // The user who should be invited to the new direct room.
+    string invitee = 2;
+}
+
+// Returned when a new room has been successfully created.
+message CreateRoomResponse {
+
+    // The ID of the newly created room.
+    string roomId = 1;
 }
