@@ -76,11 +76,11 @@ message ResponseContainer {
         VerificationEndEvent verificationEndEvent = 25;
         CapabilityEvent capabilityEvent = 26;
         CrossSigningStartResponse crossSigningStartResponse = 27;
-        CreateRoomResponse createRoomResponse = 28;
+        Room roomCreatedEvent = 29;
     }
 
-    reserved 3, 4;
-    reserved "capabilityResponse", "loginResponse";
+    reserved 3, 4, 28;
+    reserved "capabilityResponse", "loginResponse", "createRoomResponse";
 }
 
 // Generic error occurred in the backend or the headless client.
@@ -772,11 +772,4 @@ message CreateDirectRoomRequest {
 
     // The user who should be invited to the new direct room.
     string invitee = 2;
-}
-
-// Returned when a new room has been successfully created.
-message CreateRoomResponse {
-
-    // The ID of the newly created room.
-    string roomId = 1;
 }
