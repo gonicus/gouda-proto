@@ -121,6 +121,9 @@ message Error {
 
         // The given recovery key is invalid.
         InvalidRecoveryKey = 9;
+
+        // The given user ID is invalid.
+        InvalidUserId = 10;
     };
 
     // The type of this error.
