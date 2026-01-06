@@ -753,7 +753,7 @@ message InvitedReply {
 }
 
 // Request to create a new room that multiple users can join.
-// Expects a CreateRoomResponse next.
+// Expects a RoomCreatedEvent next.
 message CreateGroupRoomRequest {
 
     // Optional nice name to display instead of the roomId.
@@ -764,7 +764,7 @@ message CreateGroupRoomRequest {
 }
 
 // Request to create a new room that only one user can join.
-// Expects a CreateRoomResponse next.
+// Expects a RoomCreatedEvent next.
 message CreateDirectRoomRequest {
 
     // Optional nice name to display instead of the roomId or the other person's name.
