@@ -36,6 +36,7 @@ message RequestContainer {
         VerificationAbortRequest verificationAbortRequest = 25;
         CreateGroupRoomRequest createGroupRoomRequest = 26;
         CreateDirectRoomRequest createDirectRoomRequest = 27;
+        ChangeRoomRequest changeRoomRequest = 28;
     }
 
     reserved 2, 3, 5;
@@ -778,4 +779,18 @@ message CreateDirectRoomRequest {
 
     // The user who should be invited to the new direct room.
     string invitee = 2;
+}
+
+// Request to edit an already existing room.
+// Expects a RoomChangeEvent next.
+message ChangeRoomRequest {
+
+    // The ID of the room to be edited.
+    string roomId = 1;
+
+    // A new display name if it should be changed.
+    optional string displayName = 2;
+
+    // Update the visibility if it should be changed.
+    optional bool isPublic = 3;
 }
