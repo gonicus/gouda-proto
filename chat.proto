@@ -526,7 +526,8 @@ message User {
     string userId = 1;
 
     // Optional nice name to display instead of the userId.
-    optional string displayName = 2;
+    // An empty string can be interpreted as no displayName set.
+    string displayName = 2;
 
     // The current presence state of the user. May only be set when userPresence
     // capability is set.
@@ -575,8 +576,9 @@ message Room {
     // Unique string identifying the room.
     string roomId = 1;
 
-    // Optional nice name to display instead of the roomId.
-    optional string displayName = 2;
+    // Nice name to display instead of the roomId.
+    // An empty string can be interpreted as no displayName set.
+    string displayName = 2;
 
     // Ids of all users in this room with their current state, including our own
     // user.
@@ -613,16 +615,6 @@ message RoomChangeEvent {
     // default value that should not be used.
     bool hasTypingUserIdListChanged = 7;
 
-    // If the displayName has changed with this event.
-    // If false, the displayName has not changed and only contains a
-    // default value that should not be used.
-    bool hasDisplayNameChanged = 8;
-
-    // If the unreadCount has changed with this event.
-    // If false, the unreadCount has not changed and only contains a
-    // default value that should not be used.
-    bool hasUnreadCountChanged = 9;
-
     // User ids and their new state if they have changed. Users with unchanged
     // state must not appear in this list.
     map<string, UserRoomState> userIdList = 2;
@@ -630,10 +622,10 @@ message RoomChangeEvent {
     // List of ids of all users which are currently typing.
     repeated string typingUserIdList = 3;
 
-    // Updated display name of the room.
+    // Updated display name of the room, if it has changed.
     optional string displayName = 4;
 
-    // Updated number of unread messages and notifications in this room.
+    // Updated number of unread messages and notifications in this room, if it has changed.
     optional uint32 unreadCount = 5;
 }
 
@@ -784,7 +776,8 @@ message InvitedReply {
 message CreateGroupRoomRequest {
 
     // Optional nice name to display instead of the roomId.
-    optional string displayName = 1;
+    // An empty string can be interpreted as no displayName set.
+    string displayName = 1;
 
     // The IDs of the users who should be invited to the new group room.
     repeated string invitees = 2;
@@ -798,7 +791,8 @@ message CreateGroupRoomRequest {
 message CreateDirectRoomRequest {
 
     // Optional nice name to display instead of the roomId or the other person's name.
-    optional string displayName = 1;
+    // An empty string can be interpreted as no displayName set.
+    string displayName = 1;
 
     // The user who should be invited to the new direct room.
     string invitee = 2;
