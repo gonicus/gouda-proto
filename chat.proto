@@ -603,12 +603,35 @@ message RoomChangeEvent {
     // The id of the room this change occurs.
     string roomId = 1;
 
+    // If the userIdList has changed with this event.
+    // If false, the userIdList has not changed and only contains a
+    // default value that should not be used.
+    bool hasUserIdListChanged = 6;
+
+    // If the typingUserIdList has changed with this event.
+    // If false, the typingUserIdList has not changed and only contains a
+    // default value that should not be used.
+    bool hasTypingUserIdListChanged = 7;
+
+    // If the displayName has changed with this event.
+    // If false, the displayName has not changed and only contains a
+    // default value that should not be used.
+    bool hasDisplayNameChanged = 8;
+
+    // If the unreadCount has changed with this event.
+    // If false, the unreadCount has not changed and only contains a
+    // default value that should not be used.
+    bool hasUnreadCountChanged = 9;
+
     // User ids and their new state if they have changed. Users with unchanged
     // state must not appear in this list.
     map<string, UserRoomState> userIdList = 2;
 
     // List of ids of all users which are currently typing.
     repeated string typingUserIdList = 3;
+
+    // Updated display name of the room.
+    optional string displayName = 4;
 
     // Updated number of unread messages and notifications in this room.
     optional uint32 unreadCount = 5;
