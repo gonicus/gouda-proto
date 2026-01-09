@@ -37,6 +37,7 @@ message RequestContainer {
         CreateGroupRoomRequest createGroupRoomRequest = 26;
         CreateDirectRoomRequest createDirectRoomRequest = 27;
         ChangeRoomRequest changeRoomRequest = 28;
+        LeaveRoomRequest leaveRoomRequest = 29;
     }
 
     reserved 2, 3, 5;
@@ -78,6 +79,7 @@ message ResponseContainer {
         CapabilityEvent capabilityEvent = 26;
         CrossSigningStartResponse crossSigningStartResponse = 27;
         Room roomCreatedEvent = 29;
+        RoomLeftEvent roomLeftEvent = 30;
     }
 
     reserved 3, 4, 28;
@@ -810,4 +812,19 @@ message ChangeRoomRequest {
 
     // Update the visibility if it should be changed.
     optional bool isPublic = 3;
+}
+
+// Request to leave a specific room.
+// Expects a RoomLeftEvent next.
+message LeaveRoomRequest {
+
+    // The ID of the room that should be left.
+    string roomId = 1;
+}
+
+// Event that is raised when the user has left a specific room.
+message RoomLeftEvent {
+
+    // The ID of the room that was left.
+    string roomId = 1;
 }
