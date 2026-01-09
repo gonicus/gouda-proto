@@ -38,6 +38,7 @@ message RequestContainer {
         CreateDirectRoomRequest createDirectRoomRequest = 27;
         ChangeRoomRequest changeRoomRequest = 28;
         LeaveRoomRequest leaveRoomRequest = 29;
+        JoinRoomRequest joinRoomRequest = 30;
     }
 
     reserved 2, 3, 5;
@@ -826,5 +827,13 @@ message LeaveRoomRequest {
 message RoomLeftEvent {
 
     // The ID of the room that was left.
+    string roomId = 1;
+}
+
+// Request to join an existing room.
+// Expects a RoomChangeEvent next.
+message JoinRoomRequest {
+
+    // The ID of the room that should be joined.
     string roomId = 1;
 }
