@@ -39,6 +39,8 @@ message RequestContainer {
         ChangeRoomRequest changeRoomRequest = 28;
         LeaveRoomRequest leaveRoomRequest = 29;
         JoinRoomRequest joinRoomRequest = 30;
+        KnockRoomRequest knockRoomRequest = 31;
+        PublicRoomListRequest publicRoomListRequest = 32;
     }
 
     reserved 2, 3, 5;
@@ -81,6 +83,7 @@ message ResponseContainer {
         CrossSigningStartResponse crossSigningStartResponse = 27;
         Room roomCreatedEvent = 29;
         RoomLeftEvent roomLeftEvent = 30;
+        PublicRoomListResponse publicRoomListResponse = 31;
     }
 
     reserved 3, 4, 28;
@@ -600,6 +603,9 @@ message Room {
 
     // If the room is a direct room or group room.
     bool isDirect = 8;
+
+    // The join rule of this room.
+    RoomJoinRule joinRole = 9;
 }
 
 // Informs the client about changes in a single room.
@@ -826,14 +832,107 @@ message LeaveRoomRequest {
 // Event that is raised when the user has left a specific room.
 message RoomLeftEvent {
 
+    enum RoomLeaveReason {
+        // The user left the room on their own.
+        User = 0;
+        // The user was kicked from the room.
+        // This might also be sent in response to a Knock request if the user
+        // was denied access to the room.
+        Kicked = 1;
+        // The user was banned from the room.
+        Banned = 2;
+    }
+
     // The ID of the room that was left.
     string roomId = 1;
+
+    // The reason why the room was left.
+    RoomLeaveReason reason = 2;
+
+    // An optional message to be displayed to the user.
+    // This usually contains the reason why the user was kicked or banned from the room.
+    // Might be an empty string if no message is set.
+    string message = 3;
 }
 
-// Request to join an existing room.
+// Request to join an existing room that we can join.
+// This means that we are either invited into the room or the room is public.
 // Expects a RoomChangeEvent next.
 message JoinRoomRequest {
 
     // The ID of the room that should be joined.
     string roomId = 1;
+}
+
+// A request to knock on a room to ask members with permission if we may join.
+// A RoomChangeEvent is expected if we are allowed to join, or a RoomLeftEvent
+// if we are rejected or banned from the room.
+message KnockRoomRequest {
+
+    // The ID of the room that should be knocked.
+    string roomId = 1;
+
+    // A message that should be displayed to users receiving the knock request.
+    // Might be an empty string if no message is set.
+    string message = 2;
+}
+
+// Request a list public rooms.
+message PublicRoomListRequest {
+
+    // The maximum number of public rooms to be returned.
+    optional uint32 limit = 1;
+
+    // A pagniation token from a previous request.
+    optional string since = 2;
+
+    // An optional search term to filter the rooms.
+    // Use an empty string if the rooms should not be filtered.
+    string genericSearchTerm = 3;
+}
+
+// Response to a PublicRoomListRequest.
+message PublicRoomListResponse {
+
+    // The requested list of rooms.
+    repeated PublicRoom roomList = 1;
+
+    // A pagination token to return the next group of rooms.
+    // Use this token in PublicRoomListRequest as the "since" token.
+    optional string nextBatch = 2;
+}
+
+// Describes a public room entity.
+message PublicRoom {
+
+    // The ID of this room.
+    string roomId = 1;
+
+    // The display name of the room.
+    // Might be an empty string if the room does not have any name.
+    string displayName = 2;
+
+    // The number of members inside this room.
+    uint32 numJoinedMembers = 3;
+
+    // The topic of this room.
+    // Might be an empty string if no topic is set.
+    string topic = 4;
+
+    // The join rule of this room.
+    RoomJoinRule joinRole = 5;
+}
+
+enum RoomJoinRule {
+
+    // A user who wishes to join the room must first receive an invite
+    // to the room from someone already inside of the room.
+    Invite = 0;
+
+    // Users can join the room if they are invited, or they can request an invite to the room.
+    // They can be allowed or denied access.
+    Knock = 1;
+
+    // Anyone can join the room without any prior action.
+    Public = 2;
 }
