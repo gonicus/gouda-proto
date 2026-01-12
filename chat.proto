@@ -605,7 +605,7 @@ message Room {
     bool isDirect = 8;
 
     // The join rule of this room.
-    RoomJoinRule joinRole = 9;
+    RoomJoinRule joinRule = 9;
 }
 
 // Informs the client about changes in a single room.
@@ -920,7 +920,7 @@ message PublicRoom {
     string topic = 4;
 
     // The join rule of this room.
-    RoomJoinRule joinRole = 5;
+    RoomJoinRule joinRule = 5;
 }
 
 enum RoomJoinRule {
