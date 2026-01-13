@@ -791,8 +791,11 @@ message CreateGroupRoomRequest {
     // The IDs of the users who should be invited to the new group room.
     repeated string invitees = 2;
 
-    // If the room is visible in public room lists and can be joined without invitation.
-    bool isPublic = 3;
+    // The join rule of the new room.
+    RoomJoinRule joinRule = 4;
+
+    reserved 3;
+    reserved "isPublic";
 }
 
 // Request to create a new room that only one user can join.
