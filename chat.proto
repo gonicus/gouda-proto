@@ -640,6 +640,10 @@ message RoomChangeEvent {
 
     // Updated join rule of the room, if it has changed.
     optional RoomJoinRule joinRule = 8;
+
+    // Whether the room is a direct room or not. This should be sent every time,
+    // whether it has changed or not.
+    bool isDirect = 9;
 }
 
 // Notify the client that messages and notifications in this room have been
