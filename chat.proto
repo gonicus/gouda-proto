@@ -595,9 +595,6 @@ message Room {
     // the room actually belongs to at least one space.
     repeated string spaceId = 4;
 
-    // Whether this room can be found and joined without invitation.
-    bool isPublic = 6;
-
     // Number of unread messages and notifications in this room.
     uint32 unreadCount = 7;
 
@@ -606,6 +603,9 @@ message Room {
 
     // The join rule of this room.
     RoomJoinRule joinRule = 9;
+
+    reserved 6;
+    reserved "isPublic";
 }
 
 // Informs the client about changes in a single room.
@@ -634,7 +634,8 @@ message RoomChangeEvent {
     // Updated display name of the room, if it has changed.
     optional string displayName = 4;
 
-    // Updated number of unread messages and notifications in this room, if it has changed.
+    // Updated number of unread messages and notifications in this room, if it
+    // has changed.
     optional uint32 unreadCount = 5;
 
     // Updated join rule of the room, if it has changed.
@@ -805,8 +806,8 @@ message CreateGroupRoomRequest {
 // Expects a RoomCreatedEvent next.
 message CreateDirectRoomRequest {
 
-    // Optional nice name to display instead of the roomId or the other person's name.
-    // An empty string can be interpreted as no displayName set.
+    // Optional nice name to display instead of the roomId or the other person's
+    // name. An empty string can be interpreted as no displayName set.
     string displayName = 1;
 
     // The user who should be invited to the new direct room.
@@ -823,8 +824,11 @@ message ChangeRoomRequest {
     // A new display name if it should be changed.
     optional string displayName = 2;
 
-    // Update the visibility if it should be changed.
-    optional bool isPublic = 3;
+    // New rule of how this room can be joined.
+    optional RoomJoinRule joinRule = 4;
+
+    reserved 3;
+    reserved "isPublic";
 }
 
 // Request to leave a specific room.
@@ -856,8 +860,8 @@ message RoomLeftEvent {
     RoomLeaveReason reason = 2;
 
     // An optional message to be displayed to the user.
-    // This usually contains the reason why the user was kicked or banned from the room.
-    // Might be an empty string if no message is set.
+    // This usually contains the reason why the user was kicked or banned from
+    // the room. Might be an empty string if no message is set.
     string message = 3;
 }
 
@@ -935,8 +939,8 @@ enum RoomJoinRule {
     // to the room from someone already inside of the room.
     Invite = 0;
 
-    // Users can join the room if they are invited, or they can request an invite to the room.
-    // They can be allowed or denied access.
+    // Users can join the room if they are invited, or they can request an
+    // invite to the room. They can be allowed or denied access.
     Knock = 1;
 
     // Anyone can join the room without any prior action.
