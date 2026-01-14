@@ -636,6 +636,9 @@ message RoomChangeEvent {
 
     // Updated number of unread messages and notifications in this room, if it has changed.
     optional uint32 unreadCount = 5;
+
+    // Updated join rule of the room, if it has changed.
+    optional RoomJoinRule joinRule = 8;
 }
 
 // Notify the client that messages and notifications in this room have been
