@@ -604,8 +604,29 @@ message Room {
     // The join rule of this room.
     RoomJoinRule joinRule = 9;
 
+    // The permissions this client has in the room.
+    RoomPermissions permissions = 10;
+
     reserved 6;
     reserved "isPublic";
+}
+
+// Defines single points of authorization for a room that may or may not be done
+// by this client's user.
+message RoomPermissions {
+
+    // The user can edit basic information of the room, such as the name or
+    // topic.
+    bool canEdit = 1;
+
+    // The user can invite other users to the room.
+    bool canInvite = 2;
+
+    // The user can kick other users out of the room.
+    bool canKick = 3;
+
+    // The user can ban other users from the room.
+    bool canBan = 4;
 }
 
 // Informs the client about changes in a single room.
@@ -641,9 +662,13 @@ message RoomChangeEvent {
     // Updated join rule of the room, if it has changed.
     optional RoomJoinRule joinRule = 8;
 
-    // Whether the room is a direct room or not. This should be sent every time,
-    // whether it has changed or not.
-    bool isDirect = 9;
+    // Whether the room is a direct room or not. Should only be set if the value
+    // has changed.
+    optional bool isDirect = 9;
+
+    // The permissions this client has in the room. Should only be set if the
+    // value has changed.
+    optional RoomPermissions permissions = 10;
 }
 
 // Notify the client that messages and notifications in this room have been
@@ -871,7 +896,8 @@ message RoomLeftEvent {
 
 // Request to join an existing room that we can join.
 // This means that we are either invited into the room or the room is public.
-// Expects a RoomChangeEvent next.
+// Expects a Room message with full information about the room next, in
+// ResponseContainer.roomCreatedEvent.
 message JoinRoomRequest {
 
     // The ID of the room that should be joined.
@@ -879,8 +905,9 @@ message JoinRoomRequest {
 }
 
 // A request to knock on a room to ask members with permission if we may join.
-// A RoomChangeEvent is expected if we are allowed to join, or a RoomLeftEvent
-// if we are rejected or banned from the room.
+// A ResponseContainer.roomCreatedEvent with full room information is expected
+// next if the request was exepted, or a RoomLeftEvent if rejected or banned
+// from the room.
 message KnockRoomRequest {
 
     // The ID of the room that should be knocked.
