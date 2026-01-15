@@ -532,8 +532,7 @@ message User {
     string userId = 1;
 
     // Optional nice name to display instead of the userId.
-    // An empty string can be interpreted as no displayName set.
-    string displayName = 2;
+    optional string displayName = 2;
 
     // The current presence state of the user. May only be set when userPresence
     // capability is set.
@@ -556,7 +555,7 @@ message Space {
     string spaceId = 1;
 
     // User-friendly display name for the space.
-    string displayName = 2;
+    optional string displayName = 2;
 }
 
 // Possible states that a user can have in a room.
@@ -583,8 +582,7 @@ message Room {
     string roomId = 1;
 
     // Nice name to display instead of the roomId.
-    // An empty string can be interpreted as no displayName set.
-    string displayName = 2;
+    optional string displayName = 2;
 
     // Ids of all users in this room with their current state, including our own
     // user.
@@ -796,7 +794,7 @@ message InvitedEvent {
     string roomId = 1;
 
     // Display name of the room.
-    string roomDisplayName = 3;
+    optional string roomDisplayName = 3;
 
     // Free text to display to the client together with the invitation.
     optional string invitationText = 2;
@@ -819,7 +817,7 @@ message CreateGroupRoomRequest {
 
     // Optional nice name to display instead of the roomId.
     // An empty string can be interpreted as no displayName set.
-    string displayName = 1;
+    optional string displayName = 1;
 
     // The IDs of the users who should be invited to the new group room.
     repeated string invitees = 2;
@@ -837,7 +835,7 @@ message CreateDirectRoomRequest {
 
     // Optional nice name to display instead of the roomId or the other person's
     // name. An empty string can be interpreted as no displayName set.
-    string displayName = 1;
+    optional string displayName = 1;
 
     // The user who should be invited to the new direct room.
     string invitee = 2;
@@ -891,7 +889,7 @@ message RoomLeftEvent {
     // An optional message to be displayed to the user.
     // This usually contains the reason why the user was kicked or banned from
     // the room. Might be an empty string if no message is set.
-    string message = 3;
+    optional string message = 3;
 }
 
 // Request to join an existing room that we can join.
@@ -913,9 +911,9 @@ message KnockRoomRequest {
     // The ID of the room that should be knocked.
     string roomId = 1;
 
-    // A message that should be displayed to users receiving the knock request.
-    // Might be an empty string if no message is set.
-    string message = 2;
+    // An optional message that should be displayed to users receiving the knock
+    // request.
+    optional string message = 2;
 }
 
 // Request a list public rooms.
@@ -927,9 +925,9 @@ message PublicRoomListRequest {
     // A pagniation token from a previous request.
     optional string since = 2;
 
-    // An optional search term to filter the rooms.
-    // Use an empty string if the rooms should not be filtered.
-    string genericSearchTerm = 3;
+    // An optional search term to filter the rooms. Omitting it will request
+    // all public rooms.
+    optional string genericSearchTerm = 3;
 }
 
 // Response to a PublicRoomListRequest.
@@ -950,15 +948,13 @@ message PublicRoom {
     string roomId = 1;
 
     // The display name of the room.
-    // Might be an empty string if the room does not have any name.
-    string displayName = 2;
+    optional string displayName = 2;
 
     // The number of members inside this room.
     uint32 numJoinedMembers = 3;
 
     // The topic of this room.
-    // Might be an empty string if no topic is set.
-    string topic = 4;
+    optional string topic = 4;
 
     // The join rule of this room.
     RoomJoinRule joinRule = 5;
