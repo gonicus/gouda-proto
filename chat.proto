@@ -84,6 +84,7 @@ message ResponseContainer {
         Room roomCreatedEvent = 29;
         RoomLeftEvent roomLeftEvent = 30;
         PublicRoomListResponse publicRoomListResponse = 31;
+        MessageChangeEvent messageChangeEvent = 32;
     }
 
     reserved 3, 4, 28;
@@ -433,7 +434,7 @@ message SendMessageRequest {
 }
 
 // Request changes to the content of an existing chat message.
-// A MessageReceivedEvent or an Error is expected to be received afterwards.
+// A MessageChangeEvent or an Error is expected to be received afterwards.
 message ChangeMessageRequest {
 
     // Id of the chat message that shall be changed.
@@ -460,6 +461,25 @@ message MessageReceivedEvent {
 
     // The actual message.
     Message messageContent = 1;
+}
+
+// Notifies about changes in a single Message.
+message MessageChangeEvent  {
+
+    // Id of the changed message. Must be a valid id of an already existing
+    // message.
+    string messageId = 1;
+
+    // Whether the message is pinned (i.e. shown prominently in the room) or
+    // not. Shall only be set if it has changed.
+    optional bool isPinned = 2;
+
+    // Whether the message is encrypted or not. Shall only be set if it has
+    // changed. If it changes, the content should usually change as well.
+    optional bool isEncrypted = 3;
+
+    // If set, a new content for the message.
+    optional string content = 4;
 }
 
 // Request the backend to retract and delete an existing message.
