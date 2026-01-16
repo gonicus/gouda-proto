@@ -706,6 +706,11 @@ message Message {
 
     // Whether this message is pinned, i.e. prominently shown in the room.
     bool isPinned = 8;
+
+    // Whether this message is considered to be encrypted - which means that the latest
+    // decryption attempt failed. When this field is true, server implementations should
+    // leave the `content` empty and clients should ignore the value of `content`.
+    bool isEncrypted = 9;
 }
 
 // Describes a reaction to a message, e.g. attaching an emoji to it.
@@ -724,6 +729,16 @@ message Reaction {
     repeated User userList = 3;
 }
 
+// The order in which a sequence of messages is specified.
+enum MessagesOrder {
+
+    // Request messages in chronological order - latest message comes last
+    Forward = 0;
+
+    // Request messages in anti-chronological order - latest message comes first
+    Backward = 1;
+}
+
 // Request multiple consecutive messages of a room.
 // The request should usually be used paginated, i.e. with a reasonable limit
 // set.
@@ -732,15 +747,15 @@ message RoomMessagesRequest {
     // Id of the room for which messages shall be fetched.
     string roomId = 1;
 
-    // The result must start at the message that is the immediate predecessor
-    // to the one specified by this id, if available. If this field is not set,
-    // the result must begin at the latest message.
-    optional string fromMessageId = 2;
+    // Request messages in chronological or anti-chronological order. If omitted,
+    // the result is expected in anti-chronological (backward) order.
+    optional MessagesOrder order = 2;
 
-    // Id of the latest message that should be contained in the result. If the
-    // limit field is set as well, the resulting list must be limited at
-    // whatever applies first - the toMessageId or the limit.
-    optional string toMessageId = 3;
+    // The result must start at the message that is the immediate successor
+    // to the one specified by this id - if available. If this field is not set,
+    // the result must begin at the latest message if `order=backward` and at
+    // the oldest known message if `oder=forward`.
+    optional string fromMessageId = 3;
 
     // Maximum number of messages that should be contained in the resulting
     // list. If the toMessageId field is set as well, the resulting list must
@@ -750,6 +765,8 @@ message RoomMessagesRequest {
 
 // Response to a RoomMessagesRequest containing a list of messages.
 message RoomMessagesResponse {
+
+    // The list of messages
     repeated Message messageList = 1;
 }
 
