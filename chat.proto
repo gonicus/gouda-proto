@@ -538,11 +538,22 @@ message ToggleReactionRequest {
 
 // Sent when a reaction was added, removed or has changed in any other way.
 // Changes triggered by the user themself are included.
-// An empty userList means that this reaction is not valid anymore.
 message ReactionEvent {
 
-    // The reaction information.
-    Reaction reaction = 1;
+    // Id of the message this reaction is for.
+    string messageId = 2;
+
+    // The actual reaction (e.g. emoji).
+    string emoji = 3;
+
+    // The ID of the user who performed this reaction.
+    string userId = 4;
+
+    // If the reaction was removed instead of added.
+    bool removed = 5;
+
+    reserved 1;
+    reserved "reaction";
 }
 
 // Describes a single user entity.
