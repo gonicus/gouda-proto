@@ -636,6 +636,10 @@ message Room {
     // The permissions this client has in the room.
     RoomPermissions permissions = 10;
 
+    // Timestamp in milliseconds since January 1, 1970, 00:00 UTC of the last
+    // send or received message. Unset if no activity has occurred yet.
+    optional uint64 latestMessageTimestamp = 11;
+
     reserved 6;
     reserved "isPublic";
 }
