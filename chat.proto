@@ -16,7 +16,6 @@ message RequestContainer {
         RemoveMessageRequest removeMessageRequest = 4;
         UserListRequest userListRequest = 6;
         RoomListRequest roomListRequest = 7;
-        ToggleReactionRequest toggleReactionRequest = 8;
         InitializationRequest initializationRequest = 9;
         LoginFlowsRequest loginFlowsRequest = 10;
         UsernamePasswordLoginRequest usernamePasswordLoginRequest = 11;
@@ -41,10 +40,12 @@ message RequestContainer {
         JoinRoomRequest joinRoomRequest = 30;
         KnockRoomRequest knockRoomRequest = 31;
         PublicRoomListRequest publicRoomListRequest = 32;
+        Reaction createReactionRequest = 33;
+        Reaction removeReactionRequest = 34;
     }
 
-    reserved 2, 3, 5;
-    reserved "capabilityRequest", "sendOrEditMessageRequest", "loginRequest";
+    reserved 2, 3, 5, 8;
+    reserved "capabilityRequest", "sendOrEditMessageRequest", "loginRequest", "toggleReactionRequest";
 }
 
 // Generic container for any message that is sent from the headless client.
@@ -64,7 +65,6 @@ message ResponseContainer {
         MessageReceivedEvent messageReceivedEvent = 7;
         UserListResponse userListResponse = 8;
         RoomListResponse roomListResponse = 9;
-        ReactionEvent reactionEvent = 10;
         StatusUpdate statusUpdate = 11;
         LoginFlowsResponse loginFlowsResponse = 13;
         SSOLoginResponse ssoLoginResponse = 14;
@@ -85,10 +85,12 @@ message ResponseContainer {
         RoomLeftEvent roomLeftEvent = 30;
         PublicRoomListResponse publicRoomListResponse = 31;
         MessageChangeEvent messageChangeEvent = 32;
+        Reaction reactionCreatedEvent = 33;
+        Reaction reactionRemovedEvent = 34;
     }
 
-    reserved 3, 4, 28;
-    reserved "capabilityResponse", "loginResponse", "createRoomResponse";
+    reserved 3, 4, 10, 28;
+    reserved "capabilityResponse", "loginResponse", "createRoomResponse", "reactionEvent";
 }
 
 // Generic error occurred in the backend or the headless client.
@@ -526,36 +528,6 @@ message RoomListResponse {
     repeated Room roomList = 1;
 }
 
-// Request to have the current reaction status inverted for this user.
-message ToggleReactionRequest {
-
-    // The message to change the reaction for.
-    string messageId = 1;
-
-    // The reaction (e.g. emoji) to toggle.
-    string reaction = 2;
-}
-
-// Sent when a reaction was added, removed or has changed in any other way.
-// Changes triggered by the user themself are included.
-message ReactionEvent {
-
-    // Id of the message this reaction is for.
-    string messageId = 2;
-
-    // The actual reaction (e.g. emoji).
-    string emoji = 3;
-
-    // The ID of the user who performed this reaction.
-    string userId = 4;
-
-    // If the reaction was removed instead of added.
-    bool removed = 5;
-
-    reserved 1;
-    reserved "reaction";
-}
-
 // Describes a single user entity.
 message User {
 
@@ -746,22 +718,27 @@ message Message {
     // decryption attempt failed. When this field is true, server implementations should
     // leave the `content` empty and clients should ignore the value of `content`.
     bool isEncrypted = 9;
+
+    // Contains all reactions to this message.
+    repeated Reaction reactions = 10;
 }
 
 // Describes a reaction to a message, e.g. attaching an emoji to it.
 // A reaction is identified by messageId and reaction combined.
 message Reaction {
 
-    // Id of the message this reaction is for.
-    string messageId = 1;
+    // The room where the message is located.
+    string roomId = 1;
 
-    // The actual reaction (e.g. emoji).
-    string reaction = 2;
+    // The message the reaction is for.
+    string messageId = 2;
 
-    // List of all users that made this reaction, including the own user as
-    // well. If this list is empty, it means that this reaction does not exist
-    // any longer.
-    repeated User userList = 3;
+    // The reaction (e.g. emoji).
+    string reaction = 3;
+
+    // The user that created the reaction.
+    // This field can be omitted when creating a new reaction.
+    optional string userId = 4;
 }
 
 // The order in which a sequence of messages is specified.
