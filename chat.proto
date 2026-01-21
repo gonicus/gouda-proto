@@ -134,6 +134,9 @@ message Error {
 
         // The given user ID is invalid.
         InvalidUserId = 10;
+
+        // The given message ID is invalid.
+        InvalidMessageId = 11;
     };
 
     // The type of this error.
