@@ -442,13 +442,16 @@ message SendMessageRequest {
 // A MessageChangeEvent or an Error is expected to be received afterwards.
 message ChangeMessageRequest {
 
+    // The ID of the room the message is located.
+    string roomId = 1;
+
     // Id of the chat message that shall be changed.
-    string messageId = 1;
+    string messageId = 2;
 
     // The new content of the message.
     // This field must not be empty. In order to remove a message, a
     // RemoveMessageRequest must be made.
-    string newContent = 2;
+    string newContent = 3;
 }
 
 // Confirms that a message has been sent.
