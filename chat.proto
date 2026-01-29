@@ -624,6 +624,10 @@ message Room {
     // send or received message. Unset if no activity has occurred yet.
     optional uint64 latestMessageTimestamp = 11;
 
+    // The relative path from the `dataRootPath` directory to the downloaded room
+    // avatar, if any is available.
+    optional string avatarPath = 12;
+
     reserved 6;
     reserved "isPublic";
 }
@@ -686,6 +690,10 @@ message RoomChangeEvent {
     // The permissions this client has in the room. Should only be set if the
     // value has changed.
     optional RoomPermissions permissions = 10;
+
+    // The relative path from the `dataRootPath` directory to the downloaded room
+    // avatar, if it has changed.
+    optional string avatarPath = 11;
 }
 
 // Notify the client that messages and notifications in this room have been
