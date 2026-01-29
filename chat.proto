@@ -628,6 +628,9 @@ message Room {
     // avatar, if any is available.
     optional string avatarPath = 12;
 
+    // Whether the room is tagged as favorite by the user.
+    bool isFavorite = 13;
+
     reserved 6;
     reserved "isPublic";
 }
@@ -694,6 +697,9 @@ message RoomChangeEvent {
     // The relative path from the `dataRootPath` directory to the downloaded room
     // avatar, if it has changed.
     optional string avatarPath = 11;
+
+    // If set, the favorite state has changed to the given value.
+    optional bool isFavorite = 12;
 }
 
 // Notify the client that messages and notifications in this room have been
@@ -902,6 +908,9 @@ message ChangeRoomRequest {
 
     // New rule of how this room can be joined.
     optional RoomJoinRule joinRule = 4;
+
+    // If set flag/unflag the room as favorite.
+    optional bool isFavorite = 5;
 
     reserved 3;
     reserved "isPublic";
