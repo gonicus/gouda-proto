@@ -494,15 +494,21 @@ message MessageChangeEvent  {
 // Must result in an Error or RemoveMessageEvent.
 message RemoveMessageRequest {
 
-    // Id of the message.
-    string messageId = 1;
+    // The ID of the room the message is located.
+    string roomId = 1;
+
+    // Id of the chat message that shall be removed.
+    string messageId = 2;
 }
 
 // Event notifying that a message has been retracted and removed.
 message RemoveMessageEvent {
 
+    // The ID of the room the message is located.
+    string roomId = 1;
+
     // Id of the removed message.
-    string messageId = 1;
+    string messageId = 2;
 }
 
 // Request list of all known users.
