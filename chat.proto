@@ -792,7 +792,7 @@ message RoomMessagesRequest {
     // The result must start at the message that is the immediate successor
     // to the one specified by this id - if available. If this field is not set,
     // the result must begin at the latest message if `order=backward` and at
-    // the oldest known message if `oder=forward`.
+    // the oldest known message if `order=forward`.
     optional string fromMessageId = 3;
 
     // Maximum number of messages that should be contained in the resulting
