@@ -552,6 +552,10 @@ message User {
     // The current presence state of the user. May only be set when userPresence
     // capability is set.
     optional PresenceState presenceState = 5;
+
+    // The relative path from the `dataRootPath` directory to the downloaded user
+    // avatar, if any is available.
+    optional string avatarPath = 6;
 }
 
 message UserChangeEvent {
