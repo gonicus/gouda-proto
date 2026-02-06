@@ -13,39 +13,40 @@ message RequestContainer {
 
     // The payload; one of these requests.
     oneof content {
-        RemoveMessageRequest removeMessageRequest = 4;
-        UserListRequest userListRequest = 6;
-        RoomListRequest roomListRequest = 7;
-        InitializationRequest initializationRequest = 9;
-        LoginFlowsRequest loginFlowsRequest = 10;
-        UsernamePasswordLoginRequest usernamePasswordLoginRequest = 11;
-        SSOLoginRequest ssoLoginRequest = 12;
-        IdentityProvidersRequest identityProvidersRequest = 13;
-        UserSearchRequest userSearchRequest = 14;
+        InitializationRequest initializationRequest = 2;
+        LoginFlowsRequest loginFlowsRequest = 3;
+        IdentityProvidersRequest identityProvidersRequest = 4;
+        UsernamePasswordLoginRequest usernamePasswordLoginRequest = 5;
+        SSOLoginRequest ssoLoginRequest = 6;
+        RecoveryKeyVerificationRequest recoveryKeyVerificationRequest = 7;
+        CrossSigningStartRequest crossSigningStartRequest = 8;
+        CrossSigningMethodSelectedRequest crossSigningMethodSelectedRequest = 9;
+        CrossSigningAcceptRequest crossSigningAcceptRequest = 10;
+        VerificationAbortRequest verificationAbortRequest = 11;
+
+        UserListRequest userListRequest = 12;
+        UserSearchRequest userSearchRequest = 13;
+
+        PublicRoomListRequest publicRoomListRequest = 14;
         InvitationRequest invitationRequest = 15;
         InvitedReply invitedReply = 16;
-        SendMessageRequest sendMessageRequest = 17;
-        ChangeMessageRequest changeMessageRequest = 18;
-        RoomMessagesRequest roomMessagesRequest = 19;
-        MarkAsReadRequest markAsReadRequest = 20;
-        RecoveryKeyVerificationRequest recoveryKeyVerificationRequest = 21;
-        CrossSigningStartRequest crossSigningStartRequest = 22;
-        CrossSigningMethodSelectedRequest crossSigningMethodSelectedRequest = 23;
-        CrossSigningAcceptRequest crossSigningAcceptRequest = 24;
-        VerificationAbortRequest verificationAbortRequest = 25;
-        CreateGroupRoomRequest createGroupRoomRequest = 26;
-        CreateDirectRoomRequest createDirectRoomRequest = 27;
-        ChangeRoomRequest changeRoomRequest = 28;
-        LeaveRoomRequest leaveRoomRequest = 29;
-        JoinRoomRequest joinRoomRequest = 30;
-        KnockRoomRequest knockRoomRequest = 31;
-        PublicRoomListRequest publicRoomListRequest = 32;
-        Reaction createReactionRequest = 33;
-        Reaction removeReactionRequest = 34;
-    }
 
-    reserved 2, 3, 5, 8;
-    reserved "capabilityRequest", "sendOrEditMessageRequest", "loginRequest", "toggleReactionRequest";
+        RoomListRequest roomListRequest = 17;
+        RoomCreateGroupRequest roomCreateGroupRequest = 18;
+        RoomCreateDirectRequest roomCreateDirectRequest = 19;
+        RoomChangeRequest roomChangeRequest = 20;
+        RoomLeaveRequest roomLeaveRequest = 21;
+        RoomJoinRequest roomJoinRequest = 22;
+        RoomKnockRequest roomKnockRequest = 23;
+        RoomMessagesRequest roomMessagesRequest = 24;
+        RoomMarkAsReadRequest roomMarkAsReadRequest = 25;
+
+        MessageSendRequest messageSendRequest = 26;
+        MessageRemoveRequest messageRemoveRequest = 27;
+        MessageChangeRequest messageChangeRequest = 28;
+        Reaction createReactionRequest = 29;
+        Reaction removeReactionRequest = 30;
+    }
 }
 
 // Generic container for any message that is sent from the headless client.
@@ -60,37 +61,39 @@ message ResponseContainer {
     // The payload; one of these requests.
     oneof content {
         Error error = 2;
-        SendMessageResponse sendMessageResponse = 5;
-        RemoveMessageEvent removeMessageEvent = 6;
-        MessageReceivedEvent messageReceivedEvent = 7;
-        UserListResponse userListResponse = 8;
-        RoomListResponse roomListResponse = 9;
-        StatusUpdate statusUpdate = 11;
-        LoginFlowsResponse loginFlowsResponse = 13;
-        SSOLoginResponse ssoLoginResponse = 14;
-        IdentityProvidersResponse identityProvidersResponse = 15;
-        UserSearchResponse userSearchResponse = 16;
-        InvitedEvent invitedEvent = 17;
-        RoomChangeEvent roomChangeEvent = 18;
-        RoomMessagesResponse roomMessagesResponse = 19;
-        UserChangeEvent userChangeEvent = 20;
-        VerificationStatusEvent verificationStatusEvent = 21;
-        CrossSigningPromptEvent crossSigningPromptEvent = 22;
-        CrossSigningStartEvent crossSigningStartEvent = 23;
-        CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 24;
-        VerificationEndEvent verificationEndEvent = 25;
-        CapabilityEvent capabilityEvent = 26;
-        CrossSigningStartResponse crossSigningStartResponse = 27;
-        Room roomCreatedEvent = 29;
-        RoomLeftEvent roomLeftEvent = 30;
-        PublicRoomListResponse publicRoomListResponse = 31;
-        MessageChangeEvent messageChangeEvent = 32;
-        Reaction reactionCreatedEvent = 33;
-        Reaction reactionRemovedEvent = 34;
-    }
+        CapabilityEvent capabilityEvent = 3;
 
-    reserved 3, 4, 10, 28;
-    reserved "capabilityResponse", "loginResponse", "createRoomResponse", "reactionEvent";
+        StatusUpdate statusUpdate = 4;
+        LoginFlowsResponse loginFlowsResponse = 5;
+        SSOLoginResponse ssoLoginResponse = 6;
+        IdentityProvidersResponse identityProvidersResponse = 7;
+        VerificationStatusEvent verificationStatusEvent = 8;
+        CrossSigningPromptEvent crossSigningPromptEvent = 9;
+        CrossSigningStartResponse crossSigningStartResponse = 10;
+        CrossSigningStartEvent crossSigningStartEvent = 11;
+        CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 12;
+        VerificationEndEvent verificationEndEvent = 13;
+
+        UserListResponse userListResponse = 14;
+        UserSearchResponse userSearchResponse = 15;
+        UserChangeEvent userChangeEvent = 16;
+
+        PublicRoomListResponse publicRoomListResponse = 17;
+        InvitedEvent invitedEvent = 18;
+
+        RoomListResponse roomListResponse = 19;
+        Room roomCreatedEvent = 20;
+        RoomLeftEvent roomLeftEvent = 21;
+        RoomChangeEvent roomChangeEvent = 22;
+        RoomMessagesResponse roomMessagesResponse = 23;
+
+        MessageSendResponse messageSendResponse = 24;
+        MessageRemoveEvent messageRemoveEvent = 25;
+        MessageReceivedEvent messageReceivedEvent = 26;
+        MessageChangeEvent messageChangeEvent = 27;
+        Reaction reactionCreatedEvent = 28;
+        Reaction reactionRemovedEvent = 29;
+    }
 }
 
 // Generic error occurred in the backend or the headless client.
@@ -422,7 +425,7 @@ message CapabilityEvent {
 }
 
 // Request to send a chat message.
-message SendMessageRequest {
+message MessageSendRequest {
 
     // Id of the room this message is sent to.
     string roomId = 1;
@@ -440,7 +443,7 @@ message SendMessageRequest {
 
 // Request changes to the content of an existing chat message.
 // A MessageChangeEvent or an Error is expected to be received afterwards.
-message ChangeMessageRequest {
+message MessageChangeRequest {
 
     // The ID of the room the message is located.
     string roomId = 1;
@@ -450,14 +453,14 @@ message ChangeMessageRequest {
 
     // The new content of the message.
     // This field must not be empty. In order to remove a message, a
-    // RemoveMessageRequest must be made.
+    // MessageRemoveRequest must be made.
     string newContent = 3;
 }
 
 // Confirms that a message has been sent.
 // A MessageReceivedEvent will not be created for messages that have been sent
 // via this client.
-message SendMessageResponse {
+message MessageSendResponse {
 
     // Unique id to identify the message (e.g. for later modification).
     string messageId = 1;
@@ -491,8 +494,8 @@ message MessageChangeEvent  {
 }
 
 // Request the backend to retract and delete an existing message.
-// Must result in an Error or RemoveMessageEvent.
-message RemoveMessageRequest {
+// Must result in an Error or MessageRemoveEvent.
+message MessageRemoveRequest {
 
     // The ID of the room the message is located.
     string roomId = 1;
@@ -502,7 +505,7 @@ message RemoveMessageRequest {
 }
 
 // Event notifying that a message has been retracted and removed.
-message RemoveMessageEvent {
+message MessageRemoveEvent {
 
     // The ID of the room the message is located.
     string roomId = 1;
@@ -551,11 +554,11 @@ message User {
 
     // The current presence state of the user. May only be set when userPresence
     // capability is set.
-    optional PresenceState presenceState = 5;
+    optional PresenceState presenceState = 3;
 
     // The relative path from the `dataRootPath` directory to the downloaded user
     // avatar, if any is available.
-    optional string avatarPath = 6;
+    optional string avatarPath = 4;
 }
 
 message UserChangeEvent {
@@ -621,30 +624,27 @@ message Room {
     repeated string spaceId = 4;
 
     // Number of unread messages and notifications in this room.
-    uint32 unreadCount = 7;
+    uint32 unreadCount = 5;
 
     // If the room is a direct room or group room.
-    bool isDirect = 8;
+    bool isDirect = 6;
 
     // The join rule of this room.
-    RoomJoinRule joinRule = 9;
+    RoomJoinRule joinRule = 7;
 
     // The permissions this client has in the room.
-    RoomPermissions permissions = 10;
+    RoomPermissions permissions = 8;
 
     // Timestamp in milliseconds since January 1, 1970, 00:00 UTC of the last
     // send or received message. Unset if no activity has occurred yet.
-    optional uint64 latestMessageTimestamp = 11;
+    optional uint64 latestMessageTimestamp = 9;
 
     // The relative path from the `dataRootPath` directory to the downloaded room
     // avatar, if any is available.
-    optional string avatarPath = 12;
+    optional string avatarPath = 10;
 
     // Whether the room is tagged as favorite by the user.
-    bool isFavorite = 13;
-
-    reserved 6;
-    reserved "isPublic";
+    bool isFavorite = 11;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -717,7 +717,7 @@ message RoomChangeEvent {
 // Notify the client that messages and notifications in this room have been
 // read by the user.
 // Expects a RoomChangeEvent with unreadCount = 0 in return.
-message MarkAsReadRequest {
+message RoomMarkAsReadRequest {
     string roomId = 1;
 }
 
@@ -861,10 +861,10 @@ message InvitedEvent {
     string roomId = 1;
 
     // Display name of the room.
-    optional string roomDisplayName = 3;
+    optional string roomDisplayName = 2;
 
     // Free text to display to the client together with the invitation.
-    optional string invitationText = 2;
+    optional string invitationText = 3;
 }
 
 // The client's answer to an Invited.
@@ -880,17 +880,17 @@ message InvitedReply {
 
 // Request to create a new room that multiple users can join.
 // Expects a RoomCreatedEvent next.
-message CreateGroupRoomRequest {
+message RoomCreateGroupRequest {
 
     // Optional nice name to display instead of the roomId.
     // An empty string can be interpreted as no displayName set.
     optional string displayName = 1;
 
-    // The IDs of the users who should be invited to the new group room.
-    repeated string invitees = 2;
-
     // The join rule of the new room.
-    RoomJoinRule joinRule = 4;
+    RoomJoinRule joinRule = 2;
+
+    // The IDs of the users who should be invited to the new group room.
+    repeated string invitees = 3;
 
     // If set, a path to an image file relative to
     // InitializationRequest.dataRootPath that shall be used as the room
@@ -900,15 +900,12 @@ message CreateGroupRoomRequest {
     // actually at that path.
     // An empty string is not allowed; the field must not be set at all in that
     // case.
-    optional string avatarPath = 5;
-
-    reserved 3;
-    reserved "isPublic";
+    optional string avatarPath = 4;
 }
 
 // Request to create a new room that only one user can join.
 // Expects a RoomCreatedEvent next.
-message CreateDirectRoomRequest {
+message RoomCreateDirectRequest {
 
     // Optional nice name to display instead of the roomId or the other person's
     // name. An empty string can be interpreted as no displayName set.
@@ -930,7 +927,7 @@ message CreateDirectRoomRequest {
 
 // Request to edit an already existing room.
 // Expects a RoomChangeEvent next.
-message ChangeRoomRequest {
+message RoomChangeRequest {
 
     // The ID of the room to be edited.
     string roomId = 1;
@@ -939,10 +936,10 @@ message ChangeRoomRequest {
     optional string displayName = 2;
 
     // New rule of how this room can be joined.
-    optional RoomJoinRule joinRule = 4;
+    optional RoomJoinRule joinRule = 3;
 
     // If set flag/unflag the room as favorite.
-    optional bool isFavorite = 5;
+    optional bool isFavorite = 4;
 
     // If set, a path to an image file relative to
     // InitializationRequest.dataRootPath that shall be used as the new room
@@ -951,15 +948,12 @@ message ChangeRoomRequest {
     // The caller must ensure that the path is correct and that an image file is
     // actually at that path.
     // An empty string means that the room avatar shall be removed.
-    optional string avatarPath = 6;
-
-    reserved 3;
-    reserved "isPublic";
+    optional string avatarPath = 5;
 }
 
 // Request to leave a specific room.
 // Expects a RoomLeftEvent next.
-message LeaveRoomRequest {
+message RoomLeaveRequest {
 
     // The ID of the room that should be left.
     string roomId = 1;
@@ -969,12 +963,15 @@ message LeaveRoomRequest {
 message RoomLeftEvent {
 
     enum RoomLeaveReason {
+
         // The user left the room on their own.
         User = 0;
+
         // The user was kicked from the room.
         // This might also be sent in response to a Knock request if the user
         // was denied access to the room.
         Kicked = 1;
+
         // The user was banned from the room.
         Banned = 2;
     }
@@ -995,7 +992,7 @@ message RoomLeftEvent {
 // This means that we are either invited into the room or the room is public.
 // Expects a Room message with full information about the room next, in
 // ResponseContainer.roomCreatedEvent.
-message JoinRoomRequest {
+message RoomJoinRequest {
 
     // The ID of the room that should be joined.
     string roomId = 1;
@@ -1005,7 +1002,7 @@ message JoinRoomRequest {
 // A ResponseContainer.roomCreatedEvent with full room information is expected
 // next if the request was exepted, or a RoomLeftEvent if rejected or banned
 // from the room.
-message KnockRoomRequest {
+message RoomKnockRequest {
 
     // The ID of the room that should be knocked.
     string roomId = 1;
