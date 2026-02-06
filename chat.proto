@@ -565,6 +565,14 @@ message UserChangeEvent {
     // New presence state of the user. If not set the presence state did not
     // change. May only be set when userPresence capability is set.
     optional PresenceState presenceState = 2;
+
+    // New display name for the user, if set.
+    optional string displayName = 3;
+
+    // New path to a changed avatar image, relative to the dataRootPath of the
+    // client. If empty, the avatar has been removed. If not set, it remains
+    // unchanged.
+    optional string avatarPath = 4;
 }
 
 // A space describes a logical group of chat rooms.
