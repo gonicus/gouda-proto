@@ -16,12 +16,12 @@ message RequestContainer {
         InitializationRequest initializationRequest = 2;
         LoginFlowsRequest loginFlowsRequest = 3;
         IdentityProvidersRequest identityProvidersRequest = 4;
-        UsernamePasswordLoginRequest usernamePasswordLoginRequest = 5;
-        SSOLoginRequest ssoLoginRequest = 6;
+        LoginUsernamePasswordRequest loginUsernamePasswordRequest = 5;
+        LoginSSORequest loginSSORequest = 6;
         RecoveryKeyVerificationRequest recoveryKeyVerificationRequest = 7;
         CrossSigningStartRequest crossSigningStartRequest = 8;
         CrossSigningMethodSelectedRequest crossSigningMethodSelectedRequest = 9;
-        CrossSigningAcceptRequest crossSigningAcceptRequest = 10;
+        CrossSigningConfirmRequest crossSigningConfirmRequest = 10;
         VerificationAbortRequest verificationAbortRequest = 11;
 
         UserListRequest userListRequest = 12;
@@ -271,7 +271,7 @@ message CrossSigningMethodSelectedEvent {
 }
 
 // Accepts the verification. Must be followed by VerificationEndEvent.
-message CrossSigningAcceptRequest {
+message CrossSigningConfirmRequest {
     string verificationFlowId = 1;
 }
 
@@ -335,7 +335,7 @@ message LoginFlowsResponse {
 // Request to log in to the client using username and password.
 // Use LoginFlowsRequest to ensure that the backend supports this authentication
 // method. A StatusUpdate is returned when the login request was successful.
-message UsernamePasswordLoginRequest {
+message LoginUsernamePasswordRequest {
     string username = 1;
     string password = 2;
 }
@@ -343,7 +343,7 @@ message UsernamePasswordLoginRequest {
 // Request to log in to the client using single sign-on.
 // Use LoginFlowsRequest to ensure that the backend supports this authentication
 // method.
-message SSOLoginRequest {
+message LoginSSORequest {
     // The identity provider to be used for login.
     // Use IdentityProviderRequest to retrieve the available identity providers.
     optional string identityProvider = 1;
