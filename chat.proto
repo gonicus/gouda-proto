@@ -65,7 +65,7 @@ message ResponseContainer {
 
         StatusUpdate statusUpdate = 4;
         LoginFlowsResponse loginFlowsResponse = 5;
-        SSOLoginResponse ssoLoginResponse = 6;
+        LoginSSOResponse loginSSOResponse = 6;
         IdentityProvidersResponse identityProvidersResponse = 7;
         VerificationStatusEvent verificationStatusEvent = 8;
         CrossSigningPromptEvent crossSigningPromptEvent = 9;
@@ -352,7 +352,7 @@ message LoginSSORequest {
 // Confirms the single sign-on authentication was initiated.
 // A StatusUpdate is returned when the login request was successful and the
 // access token was retrieved.
-message SSOLoginResponse {
+message LoginSSOResponse {
     // A url that must be opened in a web browser to continue the login process.
     string loginUrl = 1;
 }
