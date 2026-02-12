@@ -504,6 +504,16 @@ message MessageRemoveRequest {
     string messageId = 2;
 }
 
+// Specifies the origin of an event (where ambiguous)
+enum EventOrigin {
+
+    // The event was user-initiated
+    UserOrigin = 0;
+
+    // The event was initiated by the backend application
+    BackendOrigin = 1;
+}
+
 // Event notifying that a message has been retracted and removed.
 message MessageRemoveEvent {
 
@@ -512,6 +522,12 @@ message MessageRemoveEvent {
 
     // Id of the removed message.
     string messageId = 2;
+
+    // Optional reason for the removal
+    optional string reason = 3;
+
+    // The origin the the removal event
+    EventOrigin origin = 4;
 }
 
 // Request list of all known users.
