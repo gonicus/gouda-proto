@@ -89,7 +89,7 @@ message ResponseContainer {
 
         MessageSendResponse messageSendResponse = 24;
         MessageRemoveEvent messageRemoveEvent = 25;
-        MessageReceivedEvent messageReceivedEvent = 26;
+        Message messageReceivedEvent = 26;
         MessageChangeEvent messageChangeEvent = 27;
         Reaction reactionCreatedEvent = 28;
         Reaction reactionRemovedEvent = 29;
@@ -424,21 +424,94 @@ message CapabilityEvent {
     repeated string mimeTypes = 4;
 }
 
-// Request to send a chat message.
+// A message sent to a room.
+message Message {
+
+    // Id of the room this message is sent to.
+    string roomId = 1;
+
+    // Unique string identifying the message.
+    // If the id is set by the backend, this field might be missing when sending
+    // a new message.
+    optional string messageId = 2;
+
+    // Id of the sender, which might be a user or the room itself in case of
+    // room messages.
+    // This field might be missing when sending a new message.
+    optional string senderId = 3;
+
+    // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
+    uint64 timestamp = 4;
+
+    // The original message this relates to, e.g. when answering to a specific
+    // message.
+    optional string relatedMessageId = 5;
+
+    // Whether this message is pinned, i.e. prominently shown in the room.
+    bool isPinned = 6;
+
+    // Whether this message is considered to be encrypted - which means that the latest
+    // decryption attempt failed. When this field is true, server implementations should
+    // leave the `content` empty and clients should ignore the value of `content`.
+    bool isEncrypted = 7;
+
+    // Contains all reactions to this message.
+    repeated Reaction reactions = 8;
+
+    // The actual content of the message.
+    // Not specifing the content is not alowed.
+    oneof content {
+        // The message content if it is a plain text message.
+        MessageContentText text = 9;
+
+        // The message content if it is an image.
+        MessageContentImage image = 10;
+    }
+}
+
+message MessageContentText {
+
+    // The actual plain text content of the message.
+    string content = 1;
+}
+
+message MessageContentImage {
+
+    // The relative path to the image starting from
+    // the `InitializationRequest::dataRootPath`.
+    // The file extension is used to identify the type
+    // of the image.
+    string imagePath = 1;
+}
+
+// Request to send a new message to a room.
 message MessageSendRequest {
 
     // Id of the room this message is sent to.
     string roomId = 1;
 
-    // The MIME type of the content.
-    string mimeType = 2;
-
-    // The actual payload of the message. Encoding depends on mimeType.
-    string content = 3;
-
     // The original message this relates to, e.g. when answering to a specific
     // message.
-    optional string relatedMessageId = 4;
+    optional string relatedMessageId = 2;
+
+    // The actual content of the message.
+    // This field must not be empty.
+    oneof content {
+        // The message content if it is a plain text message.
+        MessageContentText text = 3;
+
+        // The message content if it is an image.
+        MessageContentImage image = 4;
+    }
+}
+
+// Confirms that a message has been sent.
+// A MessageReceivedEvent will not be created for messages that have been sent
+// via this client.
+message MessageSendResponse {
+
+    // Unique id to identify the message (e.g. for later modification).
+    string messageId = 1;
 }
 
 // Request changes to the content of an existing chat message.
@@ -454,43 +527,41 @@ message MessageChangeRequest {
     // The new content of the message.
     // This field must not be empty. In order to remove a message, a
     // MessageRemoveRequest must be made.
-    string newContent = 3;
-}
+    oneof content {
+        // The message content if it is a plain text message.
+        MessageContentText text = 4;
 
-// Confirms that a message has been sent.
-// A MessageReceivedEvent will not be created for messages that have been sent
-// via this client.
-message MessageSendResponse {
-
-    // Unique id to identify the message (e.g. for later modification).
-    string messageId = 1;
-}
-
-// Notifies about a received message from another user or an edited message (by
-// anyone).
-message MessageReceivedEvent {
-
-    // The actual message.
-    Message messageContent = 1;
+        // The message content if it is an image.
+        MessageContentImage image = 5;
+    }
 }
 
 // Notifies about changes in a single Message.
 message MessageChangeEvent  {
 
+    // The ID of the room the message is located.
+    string roomId = 1;
+
     // Id of the changed message. Must be a valid id of an already existing
     // message.
-    string messageId = 1;
+    string messageId = 2;
 
     // Whether the message is pinned (i.e. shown prominently in the room) or
     // not. Shall only be set if it has changed.
-    optional bool isPinned = 2;
+    optional bool isPinned = 3;
 
     // Whether the message is encrypted or not. Shall only be set if it has
     // changed. If it changes, the content should usually change as well.
-    optional bool isEncrypted = 3;
+    optional bool isEncrypted = 4;
 
     // If set, a new content for the message.
-    optional string content = 4;
+    oneof content {
+        // The message content if it is a plain text message.
+        MessageContentText text = 5;
+
+        // The message content if it is an image.
+        MessageContentImage image = 6;
+    }
 }
 
 // Request the backend to retract and delete an existing message.
@@ -735,46 +806,6 @@ message RoomChangeEvent {
 // Expects a RoomChangeEvent with unreadCount = 0 in return.
 message RoomMarkAsReadRequest {
     string roomId = 1;
-}
-
-// Describes a chat message.
-message Message {
-
-    // Unique string identifying the message.
-    // If the id is set by the backend, this field might be missing when sending
-    // a new message.
-    optional string messageId = 1;
-
-    // Id of the room this message is sent to.
-    string roomId = 2;
-
-    // Id of the sender, which might be a user or the room itself in case of
-    // room messages.
-    string senderId = 3;
-
-    // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
-    uint64 timestamp = 4;
-
-    // The MIME type of the content.
-    string mimeType = 5;
-
-    // The actual payload of the message. Encoding depends on mimeType.
-    string content = 6;
-
-    // The original message this relates to, e.g. when answering to a specific
-    // message.
-    optional string relatedMessageId = 7;
-
-    // Whether this message is pinned, i.e. prominently shown in the room.
-    bool isPinned = 8;
-
-    // Whether this message is considered to be encrypted - which means that the latest
-    // decryption attempt failed. When this field is true, server implementations should
-    // leave the `content` empty and clients should ignore the value of `content`.
-    bool isEncrypted = 9;
-
-    // Contains all reactions to this message.
-    repeated Reaction reactions = 10;
 }
 
 // Describes a reaction to a message, e.g. attaching an emoji to it.
