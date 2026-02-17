@@ -431,14 +431,11 @@ message Message {
     string roomId = 1;
 
     // Unique string identifying the message.
-    // If the id is set by the backend, this field might be missing when sending
-    // a new message.
-    optional string messageId = 2;
+    string messageId = 2;
 
     // Id of the sender, which might be a user or the room itself in case of
     // room messages.
-    // This field might be missing when sending a new message.
-    optional string senderId = 3;
+    string senderId = 3;
 
     // Creation time of the message in milliseconds from 01.01.1970 00:00 UTC.
     uint64 timestamp = 4;
