@@ -456,7 +456,7 @@ message Message {
     repeated Reaction reactions = 8;
 
     // The actual content of the message.
-    // Not specifing the content is not alowed.
+    // Not specifying the content is not allowed.
     oneof content {
         // The message content if it is a plain text message.
         MessageContentText text = 9;
