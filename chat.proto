@@ -463,6 +463,9 @@ message Message {
 
         // The message content if it is an image.
         MessageContentImage image = 10;
+
+        // The message content if it is a file.
+        MessageContentFile file = 11;
     }
 }
 
@@ -479,6 +482,16 @@ message MessageContentImage {
     // The file extension is used to identify the type
     // of the image.
     string imagePath = 1;
+}
+
+message MessageContentFile {
+
+    // The relative path to the file starting from
+    // the `InitializationRequest::dataRoorPath`.
+    string filePath = 1;
+
+    // The name of the file, if available.
+    optional string fileName = 2;
 }
 
 // Request to send a new message to a room.
@@ -499,6 +512,9 @@ message MessageSendRequest {
 
         // The message content if it is an image.
         MessageContentImage image = 4;
+
+        // The message content if it is a file.
+        MessageContentFile file = 5;
     }
 }
 
@@ -530,6 +546,9 @@ message MessageChangeRequest {
 
         // The message content if it is an image.
         MessageContentImage image = 5;
+
+        // The message content if it is a file.
+        MessageContentFile file = 6;
     }
 }
 
@@ -558,6 +577,9 @@ message MessageChangeEvent  {
 
         // The message content if it is an image.
         MessageContentImage image = 6;
+
+        // The message content if it is a file.
+        MessageContentFile file = 7;
     }
 }
 
