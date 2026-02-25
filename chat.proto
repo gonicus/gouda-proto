@@ -467,6 +467,9 @@ message Message {
         // The message content if it is a file.
         MessageContentFile file = 11;
     }
+
+    // Ids of users that have been mentioned in this message.
+    repeated string mentionedUserIds = 12;
 }
 
 message MessageContentText {
@@ -581,6 +584,13 @@ message MessageChangeEvent  {
         // The message content if it is a file.
         MessageContentFile file = 7;
     }
+
+    // Whether the field mentionedUserIds has changed.
+    bool hasMentionedUserIdsChanged = 8;
+
+    // Ids of users that have been mentioned in this message. The value of this
+    // field is only defined when hasMentionedUserIdsChanged is true.
+    repeated string mentionedUserIds = 9;
 }
 
 // Request the backend to retract and delete an existing message.
