@@ -140,6 +140,9 @@ message Error {
 
         // The given message ID is invalid.
         InvalidMessageId = 11;
+
+        // The message with the given ID was not found.
+        MessageNotFound = 12;
     };
 
     // The type of this error.
