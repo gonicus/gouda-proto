@@ -146,6 +146,9 @@ message Error {
 
         // An authorization flow was requested but the client is already logged in.
         AlreadyLoggedIn = 13;
+
+        // An initialization request was made, but the client is already initialized.
+        AlreadyInitialized = 14;
     };
 
     // The type of this error.
