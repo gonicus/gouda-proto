@@ -143,6 +143,9 @@ message Error {
 
         // The message with the given ID was not found.
         MessageNotFound = 12;
+
+        // An authorization flow was requested but the client is already logged in.
+        AlreadyLoggedIn = 13;
     };
 
     // The type of this error.
