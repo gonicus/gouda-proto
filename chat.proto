@@ -46,6 +46,7 @@ message RequestContainer {
         MessageChangeRequest messageChangeRequest = 28;
         Reaction createReactionRequest = 29;
         Reaction removeReactionRequest = 30;
+        MessageRequest messageRequest = 31;
     }
 }
 
@@ -93,6 +94,7 @@ message ResponseContainer {
         MessageChangeEvent messageChangeEvent = 27;
         Reaction reactionCreatedEvent = 28;
         Reaction reactionRemovedEvent = 29;
+        Message messageResponse = 30;
     }
 }
 
@@ -504,6 +506,16 @@ message MessageContentFile {
 
     // The name of the file, if available.
     optional string fileName = 2;
+}
+
+// Request a single specific message.
+message MessageRequest {
+
+    // Id of the room this message is from.
+    string roomId = 1;
+
+    // Id of the message itself.
+    string messageId = 2;
 }
 
 // Request to send a new message to a room.
