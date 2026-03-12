@@ -151,6 +151,12 @@ message Error {
 
         // An initialization request was made, but the client is already initialized.
         AlreadyInitialized = 14;
+
+        /// The requested reaction was not found.
+        ReactionNotFound = 15;
+
+        /// The user does not have sufficient permissions to perform the requested action.
+        NotAllowed = 16;
     };
 
     // The type of this error.
