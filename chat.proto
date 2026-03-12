@@ -483,10 +483,13 @@ message Message {
 
         // The message content if it is a file.
         MessageContentFile file = 11;
+
+        // The message content if it is a membership change.
+        MessageContentMembershipChange membershipChange = 12;
     }
 
     // Ids of users that have been mentioned in this message.
-    repeated string mentionedUserIds = 12;
+    repeated string mentionedUserIds = 13;
 }
 
 message MessageContentText {
@@ -512,6 +515,22 @@ message MessageContentFile {
 
     // The name of the file, if available.
     optional string fileName = 2;
+}
+
+// The message content, if it is a message about a change in membership,
+// for example, when a user has left or entered the room.
+// The user in question is determined via the senderId of the message object.
+message MessageContentMembershipChange {
+
+    enum MembershipChange {
+        Joined = 0;
+        Left = 1;
+        Banned = 2;
+        Kicked = 3;
+    }
+
+    /// The change of membership status.
+    MembershipChange change = 1;
 }
 
 // Request a single specific message.
