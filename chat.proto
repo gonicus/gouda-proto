@@ -629,6 +629,9 @@ message MessageChangeEvent  {
 
         // The message content if it is a file.
         MessageContentFile file = 7;
+
+        // The message content if it is a membership change.
+        MessageContentMembershipChange membershipChange = 10;
     }
 
     // Whether the field mentionedUserIds has changed.
