@@ -519,18 +519,24 @@ message MessageContentFile {
 
 // The message content, if it is a message about a change in membership,
 // for example, when a user has left or entered the room.
-// The user in question is determined via the senderId of the message object.
+// The affected user may differ from the sender and is listed separately here.
 message MessageContentMembershipChange {
 
     enum MembershipChange {
         Joined = 0;
         Left = 1;
-        Banned = 2;
-        Kicked = 3;
+        Invited = 2;
+        Knocked = 3;
+        Banned = 4;
+        Unbanned = 5;
+        Kicked = 6;
     }
 
     /// The change of membership status.
     MembershipChange change = 1;
+
+    /// The user that the change applies to
+    User affectedUser = 2;
 }
 
 // Request a single specific message.
