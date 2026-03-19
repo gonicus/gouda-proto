@@ -535,8 +535,8 @@ message MessageContentMembershipChange {
     /// The change of membership status.
     MembershipChange change = 1;
 
-    /// The user that the change applies to
-    User affectedUser = 2;
+    /// The ID of the user the change applies to
+    string affectedUserId = 2;
 }
 
 // Request a single specific message.
