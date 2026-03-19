@@ -86,7 +86,6 @@ message ResponseContainer {
         Room roomCreatedEvent = 20;
         RoomLeftEvent roomLeftEvent = 21;
         RoomChangeEvent roomChangeEvent = 22;
-        RoomMessagesResponse roomMessagesResponse = 23;
 
         MessageSendResponse messageSendResponse = 24;
         MessageRemoveEvent messageRemoveEvent = 25;
@@ -95,7 +94,13 @@ message ResponseContainer {
         Reaction reactionCreatedEvent = 28;
         Reaction reactionRemovedEvent = 29;
         Message messageResponse = 30;
+
+        MultipartEnd multipartEnd = 31;
+
     }
+
+    reserved 23;
+    reserved "roomMessagesResponse";
 }
 
 // Generic error occurred in the backend or the headless client.
@@ -165,6 +170,9 @@ message Error {
     // An optional string describing details of the error.
     optional string errorString = 2;
 }
+
+// Object used to mark a multi-part answer as complete.
+message MultipartEnd { }
 
 // Initializes a client and establishes a connection to the specified backend.
 // A StatusUpdate is returned when the connection was successful.
@@ -923,6 +931,7 @@ enum MessagesOrder {
 // Request multiple consecutive messages of a room.
 // The request should usually be used paginated, i.e. with a reasonable limit
 // set.
+// The response is expected to be a multi-part response of MessageReceivedEvent's.
 message RoomMessagesRequest {
 
     // Id of the room for which messages shall be fetched.
@@ -942,13 +951,6 @@ message RoomMessagesRequest {
     // list. If the toMessageId field is set as well, the resulting list must
     // be limited at whatever applies first - the toMessageId or the limit.
     optional uint32 limit = 4;
-}
-
-// Response to a RoomMessagesRequest containing a list of messages.
-message RoomMessagesResponse {
-
-    // The list of messages
-    repeated Message messageList = 1;
 }
 
 // Describes a request to search for known users, i.e. accounts registered to
