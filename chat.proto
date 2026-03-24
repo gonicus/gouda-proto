@@ -24,7 +24,7 @@ message RequestContainer {
         CrossSigningConfirmRequest crossSigningConfirmRequest = 10;
         VerificationAbortRequest verificationAbortRequest = 11;
 
-        UserListRequest userListRequest = 12;
+        UserRequest userRequest = 12;
         UserSearchRequest userSearchRequest = 13;
 
         PublicRoomListRequest publicRoomListRequest = 14;
@@ -32,6 +32,7 @@ message RequestContainer {
         InvitedReply invitedReply = 16;
 
         RoomListRequest roomListRequest = 17;
+        RoomUsersRequest roomUsersRequest = 32;
         RoomCreateGroupRequest roomCreateGroupRequest = 18;
         RoomCreateDirectRequest roomCreateDirectRequest = 19;
         RoomChangeRequest roomChangeRequest = 20;
@@ -75,7 +76,7 @@ message ResponseContainer {
         CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 12;
         VerificationEndEvent verificationEndEvent = 13;
 
-        UserListResponse userListResponse = 14;
+        User userResponse = 14;
         UserSearchResponse userSearchResponse = 15;
         UserChangeEvent userChangeEvent = 16;
 
@@ -504,6 +505,9 @@ message MessageContentText {
 
     // The actual plain text content of the message.
     string content = 1;
+
+    // The IDs of the users that where mentioned within the text.
+    repeated string mentionedUsers = 2;
 }
 
 message MessageContentImage {
@@ -693,16 +697,6 @@ message MessageRemoveEvent {
     EventOrigin origin = 4;
 }
 
-// Request list of all known users.
-message UserListRequest {}
-
-// Response for a user list request.
-message UserListResponse {
-
-    // List of users.
-    repeated User userList = 1;
-}
-
 // Request a list of rooms.
 message RoomListRequest {
 
@@ -720,6 +714,14 @@ message RoomListResponse {
 
     // The requested list of rooms.
     repeated Room roomList = 1;
+}
+
+// Request to retrieve the users in a specific room.
+// An UserListResponse is expected next.
+message RoomUsersRequest {
+
+    // The ID of the room from which the users should be retrieved.
+    string roomId = 1;
 }
 
 // Describes a single user entity.
@@ -740,7 +742,23 @@ message User {
     optional string avatarPath = 4;
 }
 
+// Request to fetch the information of a single user.
+// An UserResponse is expected next.
+message UserRequest {
+
+    // The ID of the user to fetch information from.
+    string userID = 1;
+}
+
+// Response for a user list request.
+message UserListResponse {
+
+    // List of users.
+    repeated User userList = 1;
+}
+
 message UserChangeEvent {
+
     // The ID of the user this change occurs.
     string userId = 1;
 
