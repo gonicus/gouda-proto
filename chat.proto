@@ -32,22 +32,22 @@ message RequestContainer {
         InvitedReply invitedReply = 16;
 
         RoomListRequest roomListRequest = 17;
-        RoomUsersRequest roomUsersRequest = 32;
-        RoomCreateGroupRequest roomCreateGroupRequest = 18;
-        RoomCreateDirectRequest roomCreateDirectRequest = 19;
-        RoomChangeRequest roomChangeRequest = 20;
-        RoomLeaveRequest roomLeaveRequest = 21;
-        RoomJoinRequest roomJoinRequest = 22;
-        RoomKnockRequest roomKnockRequest = 23;
-        RoomMessagesRequest roomMessagesRequest = 24;
-        RoomMarkAsReadRequest roomMarkAsReadRequest = 25;
+        RoomUsersRequest roomUsersRequest = 18;
+        RoomCreateGroupRequest roomCreateGroupRequest = 19;
+        RoomCreateDirectRequest roomCreateDirectRequest = 20;
+        RoomChangeRequest roomChangeRequest = 21;
+        RoomLeaveRequest roomLeaveRequest = 22;
+        RoomJoinRequest roomJoinRequest = 23;
+        RoomKnockRequest roomKnockRequest = 24;
+        RoomMessagesRequest roomMessagesRequest = 25;
+        RoomMarkAsReadRequest roomMarkAsReadRequest = 26;
 
-        MessageSendRequest messageSendRequest = 26;
-        MessageRemoveRequest messageRemoveRequest = 27;
-        MessageChangeRequest messageChangeRequest = 28;
-        Reaction createReactionRequest = 29;
-        Reaction removeReactionRequest = 30;
-        MessageRequest messageRequest = 31;
+        MessageSendRequest messageSendRequest = 27;
+        MessageRemoveRequest messageRemoveRequest = 28;
+        MessageChangeRequest messageChangeRequest = 29;
+        Reaction createReactionRequest = 30;
+        Reaction removeReactionRequest = 31;
+        MessageRequest messageRequest = 32;
     }
 }
 
@@ -77,16 +77,17 @@ message ResponseContainer {
         VerificationEndEvent verificationEndEvent = 13;
 
         User userResponse = 14;
-        UserSearchResponse userSearchResponse = 15;
-        UserChangeEvent userChangeEvent = 16;
+        UserListResponse userListResponse = 15;
+        UserSearchResponse userSearchResponse = 16;
+        UserChangeEvent userChangeEvent = 17;
 
-        PublicRoomListResponse publicRoomListResponse = 17;
-        InvitedEvent invitedEvent = 18;
+        PublicRoomListResponse publicRoomListResponse = 18;
+        InvitedEvent invitedEvent = 19;
 
-        RoomListResponse roomListResponse = 19;
-        Room roomCreatedEvent = 20;
-        RoomLeftEvent roomLeftEvent = 21;
-        RoomChangeEvent roomChangeEvent = 22;
+        RoomListResponse roomListResponse = 20;
+        Room roomCreatedEvent = 21;
+        RoomLeftEvent roomLeftEvent = 22;
+        RoomChangeEvent roomChangeEvent = 23;
 
         MessageSendResponse messageSendResponse = 24;
         MessageRemoveEvent messageRemoveEvent = 25;
@@ -99,9 +100,6 @@ message ResponseContainer {
         MultipartEnd multipartEnd = 31;
 
     }
-
-    reserved 23;
-    reserved "roomMessagesResponse";
 }
 
 // Generic error occurred in the backend or the headless client.
