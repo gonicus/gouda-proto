@@ -503,9 +503,6 @@ message MessageContentText {
 
     // The actual plain text content of the message.
     string content = 1;
-
-    // The IDs of the users that where mentioned within the text.
-    repeated string mentionedUsers = 2;
 }
 
 message MessageContentImage {
@@ -581,6 +578,9 @@ message MessageSendRequest {
         // The message content if it is a file.
         MessageContentFile file = 5;
     }
+
+    // Ids of users that have been mentioned in this message.
+    repeated string mentionedUserIds = 6;
 }
 
 // Confirms that a message has been sent.
@@ -615,6 +615,13 @@ message MessageChangeRequest {
         // The message content if it is a file.
         MessageContentFile file = 6;
     }
+
+    // Whether mentionedUserIds should be updated.
+    bool hasMentionedUserIdsChanged = 7;
+
+    // Ids of users that have been mentioned in this message. The value of this
+    // field is only defined when hasMentionedUserIdsChanged is true.
+    repeated string mentionedUserIds = 8;
 }
 
 // Notifies about changes in a single Message.
