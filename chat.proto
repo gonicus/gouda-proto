@@ -752,7 +752,7 @@ message User {
 message UserRequest {
 
     // The ID of the user to fetch information from.
-    string userID = 1;
+    string userId = 1;
 }
 
 // Response for a user list request.
