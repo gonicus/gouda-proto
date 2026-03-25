@@ -32,22 +32,21 @@ message RequestContainer {
         InvitedReply invitedReply = 16;
 
         RoomListRequest roomListRequest = 17;
-        RoomUsersRequest roomUsersRequest = 18;
-        RoomCreateGroupRequest roomCreateGroupRequest = 19;
-        RoomCreateDirectRequest roomCreateDirectRequest = 20;
-        RoomChangeRequest roomChangeRequest = 21;
-        RoomLeaveRequest roomLeaveRequest = 22;
-        RoomJoinRequest roomJoinRequest = 23;
-        RoomKnockRequest roomKnockRequest = 24;
-        RoomMessagesRequest roomMessagesRequest = 25;
-        RoomMarkAsReadRequest roomMarkAsReadRequest = 26;
+        RoomCreateGroupRequest roomCreateGroupRequest = 18;
+        RoomCreateDirectRequest roomCreateDirectRequest = 19;
+        RoomChangeRequest roomChangeRequest = 20;
+        RoomLeaveRequest roomLeaveRequest = 21;
+        RoomJoinRequest roomJoinRequest = 22;
+        RoomKnockRequest roomKnockRequest = 23;
+        RoomMessagesRequest roomMessagesRequest = 24;
+        RoomMarkAsReadRequest roomMarkAsReadRequest = 25;
 
-        MessageSendRequest messageSendRequest = 27;
-        MessageRemoveRequest messageRemoveRequest = 28;
-        MessageChangeRequest messageChangeRequest = 29;
-        Reaction createReactionRequest = 30;
-        Reaction removeReactionRequest = 31;
-        MessageRequest messageRequest = 32;
+        MessageSendRequest messageSendRequest = 26;
+        MessageRemoveRequest messageRemoveRequest = 27;
+        MessageChangeRequest messageChangeRequest = 28;
+        Reaction createReactionRequest = 29;
+        Reaction removeReactionRequest = 30;
+        MessageRequest messageRequest = 31;
     }
 }
 
@@ -77,27 +76,26 @@ message ResponseContainer {
         VerificationEndEvent verificationEndEvent = 13;
 
         User userResponse = 14;
-        UserListResponse userListResponse = 15;
-        UserSearchResponse userSearchResponse = 16;
-        UserChangeEvent userChangeEvent = 17;
+        UserSearchResponse userSearchResponse = 15;
+        UserChangeEvent userChangeEvent = 16;
 
-        PublicRoomListResponse publicRoomListResponse = 18;
-        InvitedEvent invitedEvent = 19;
+        PublicRoomListResponse publicRoomListResponse = 17;
+        InvitedEvent invitedEvent = 18;
 
-        RoomListResponse roomListResponse = 20;
-        Room roomCreatedEvent = 21;
-        RoomLeftEvent roomLeftEvent = 22;
-        RoomChangeEvent roomChangeEvent = 23;
+        RoomListResponse roomListResponse = 19;
+        Room roomCreatedEvent = 20;
+        RoomLeftEvent roomLeftEvent = 21;
+        RoomChangeEvent roomChangeEvent = 22;
 
-        MessageSendResponse messageSendResponse = 24;
-        MessageRemoveEvent messageRemoveEvent = 25;
-        Message messageReceivedEvent = 26;
-        MessageChangeEvent messageChangeEvent = 27;
-        Reaction reactionCreatedEvent = 28;
-        Reaction reactionRemovedEvent = 29;
-        Message messageResponse = 30;
+        MessageSendResponse messageSendResponse = 23;
+        MessageRemoveEvent messageRemoveEvent = 24;
+        Message messageReceivedEvent = 25;
+        MessageChangeEvent messageChangeEvent = 26;
+        Reaction reactionCreatedEvent = 27;
+        Reaction reactionRemovedEvent = 28;
+        Message messageResponse = 29;
 
-        MultipartEnd multipartEnd = 31;
+        MultipartEnd multipartEnd = 30;
 
     }
 }
@@ -721,14 +719,6 @@ message RoomListResponse {
     repeated Room roomList = 1;
 }
 
-// Request to retrieve the users in a specific room.
-// An UserListResponse is expected next.
-message RoomUsersRequest {
-
-    // The ID of the room from which the users should be retrieved.
-    string roomId = 1;
-}
-
 // Describes a single user entity.
 message User {
 
@@ -752,14 +742,7 @@ message User {
 message UserRequest {
 
     // The ID of the user to fetch information from.
-    string userID = 1;
-}
-
-// Response for a user list request.
-message UserListResponse {
-
-    // List of users.
-    repeated User userList = 1;
+    string userId = 1;
 }
 
 message UserChangeEvent {
