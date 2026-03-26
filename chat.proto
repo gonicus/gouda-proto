@@ -154,11 +154,14 @@ message Error {
         // An initialization request was made, but the client is already initialized.
         AlreadyInitialized = 14;
 
-        /// The requested reaction was not found.
+        // The requested reaction was not found.
         ReactionNotFound = 15;
 
-        /// The user does not have sufficient permissions to perform the requested action.
+        // The user does not have sufficient permissions to perform the requested action.
         NotAllowed = 16;
+
+        // The requested user was not found.
+        UserNotFound = 17;
     };
 
     // The type of this error.
@@ -537,10 +540,10 @@ message MessageContentMembershipChange {
         Kicked = 6;
     }
 
-    /// The change of membership status.
+    // The change of membership status.
     MembershipChange change = 1;
 
-    /// The ID of the user the change applies to
+    // The ID of the user the change applies to
     string affectedUserId = 2;
 }
 
