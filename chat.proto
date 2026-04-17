@@ -754,9 +754,9 @@ message UserChangeEvent {
     // The ID of the user this change occurs.
     string userId = 1;
 
-    // New presence state of the user. If not set the presence state did not
+    // New status of the user. If not set the status did not
     // change. May only be set when userPresence capability is set.
-    optional PresenceState presenceState = 2;
+    optional UserStatus status = 2;
 
     // New display name for the user, if set.
     optional string displayName = 3;
