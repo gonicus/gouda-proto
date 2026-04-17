@@ -26,6 +26,7 @@ message RequestContainer {
 
         UserRequest userRequest = 12;
         UserSearchRequest userSearchRequest = 13;
+        UserStatus userStatusSetOwnRequest = 32;
 
         PublicRoomListRequest publicRoomListRequest = 14;
         InvitationRequest invitationRequest = 15;
@@ -978,6 +979,17 @@ message UserSearchResponse {
 
     // List of users matching the search query.
     repeated User userList = 1;
+}
+
+// Describes the presence status of a user, e.g. used for setting the own state
+// by using the according request.
+message UserStatus {
+
+    // The current state of the user. The value "Unknown" is n/a.
+    PresenceState state = 1;
+
+    // Optional free-text status message that other users can see.
+    optional string statusMessage = 2;
 }
 
 // Issue an invite to one or more users to join a chat room.
