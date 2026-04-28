@@ -606,6 +606,12 @@ message MessageSendRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 5;
+
+        // The message content if it is an audio file.
+        MessageContentAudio audioFile = 7;
+
+        // The message content if it is a video file.
+        MessageContentVideo videoFile = 8;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -643,6 +649,12 @@ message MessageChangeRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 6;
+
+        // The message content if it is an audio file.
+        MessageContentAudio audioFile = 9;
+
+        // The message content if it is a video file.
+        MessageContentVideo videoFile = 10;
     }
 
     // Whether mentionedUserIds should be updated.
@@ -684,6 +696,12 @@ message MessageChangeEvent  {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 10;
+
+        // The message content if it is an audio file.
+        MessageContentAudio audioFile = 11;
+
+        // The message content if it is a video file.
+        MessageContentVideo videoFile = 12;
     }
 
     // Whether the field mentionedUserIds has changed.
