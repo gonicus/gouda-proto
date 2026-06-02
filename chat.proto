@@ -777,13 +777,15 @@ message User {
     // Optional nice name to display instead of the userId.
     optional string displayName = 2;
 
-    // The current presence state of the user. May only be set when userPresence
-    // capability is set.
-    optional PresenceState presenceState = 3;
-
     // The relative path from the `dataRootPath` directory to the downloaded user
     // avatar, if any is available.
     optional string avatarPath = 4;
+
+    // The status of the user.
+    UserStatus status = 5;
+
+    reserved 3;
+    reserved "presenceState";
 }
 
 // Request to fetch the information of a single user.
