@@ -863,7 +863,7 @@ message GlobalSettingsRequest {
 
 // Response to GlobalSettingsRequest (with tag) or when the settings have
 // changed on the backend (without tag).
-message GlobalSettingsEvent {
+message GlobalSettings {
 
     // The global settings for notification incoming messages.
     NotificationSetting notificationSetting = 1;
