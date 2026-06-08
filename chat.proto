@@ -921,7 +921,7 @@ message Room {
     bool isFavorite = 11;
 
     // Room-specific settings
-    RoomSettings settings roomSettings = 12;
+    RoomSettings roomSettings = 12;
 }
 
 // Defines single points of authorization for a room that may or may not be done
