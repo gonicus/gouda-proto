@@ -23,6 +23,7 @@ message RequestContainer {
         CrossSigningMethodSelectedRequest crossSigningMethodSelectedRequest = 9;
         CrossSigningConfirmRequest crossSigningConfirmRequest = 10;
         VerificationAbortRequest verificationAbortRequest = 11;
+        GlobalSettingsRequest globalSettingsRequest = 33;
 
         UserRequest userRequest = 12;
         UserSearchRequest userSearchRequest = 13;
@@ -75,6 +76,7 @@ message ResponseContainer {
         CrossSigningStartEvent crossSigningStartEvent = 11;
         CrossSigningMethodSelectedEvent crossSigningMethodSelectedEvent = 12;
         VerificationEndEvent verificationEndEvent = 13;
+        GlobalSettings globalSettingsEvent = 31;
 
         User userResponse = 14;
         UserSearchResponse userSearchResponse = 15;
@@ -840,6 +842,42 @@ enum PresenceState {
     Online = 3;
 }
 
+// When a notification on a new message shall be created.
+enum NotificationSetting {
+
+    // Notification for every message.
+    AllMessages = 0;
+
+    // Only if the user is mentioned directly or a keyword (such as "@room") is
+    // used.
+    MentionsAndKeywordsOnly = 1;
+
+    // No notifications for any message.
+    Mute = 2;
+}
+
+// Request global settings; GlobalSettingsEvent is expected in return, if
+// StatusUpdate.statusCode is LoggedIn, or an error if not logged in.
+message GlobalSettingsRequest {
+}
+
+// Response to GlobalSettingsRequest (with tag) or when the settings have
+// changed on the backend (without tag).
+message GlobalSettingsEvent {
+
+    // The global settings for notification incoming messages.
+    NotificationSetting notificationSetting = 1;
+}
+
+// Room-specific settings
+message RoomSettings {
+
+    // The room-specific settings for notification incoming messages which
+    // overrides the global setting. If not set, the global settings will be
+    // used.
+    optional NotificationSetting notificationSetting = 1;
+}
+
 // Describes a room entity. This might be a room with several users or just a
 // direct chat between two.
 message Room {
@@ -881,6 +919,9 @@ message Room {
 
     // Whether the room is tagged as favorite by the user.
     bool isFavorite = 11;
+
+    // Room-specific settings
+    RoomSettings settings roomSettings = 12;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -948,6 +989,10 @@ message RoomChangeEvent {
 
     // If set, the favorite state has changed to the given value.
     optional bool isFavorite = 12;
+
+    // Set when the room-specific settings have changed. The message must
+    // contain all of the room settigs, even those which have not changed.
+    optional RoomSettings settings roomSettings = 13;
 }
 
 // Notify the client that messages and notifications in this room have been
