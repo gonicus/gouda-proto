@@ -992,7 +992,7 @@ message RoomChangeEvent {
 
     // Set when the room-specific settings have changed. The message must
     // contain all of the room settigs, even those which have not changed.
-    optional RoomSettings settings roomSettings = 13;
+    optional RoomSettings roomSettings = 13;
 }
 
 // Notify the client that messages and notifications in this room have been
