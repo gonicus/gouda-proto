@@ -42,6 +42,7 @@ message RequestContainer {
         RoomKnockRequest roomKnockRequest = 23;
         RoomMessagesRequest roomMessagesRequest = 24;
         RoomMarkAsReadRequest roomMarkAsReadRequest = 25;
+        RoomTypingRequest roomTypingRequest = 34;
 
         MessageSendRequest messageSendRequest = 26;
         MessageRemoveRequest messageRemoveRequest = 27;
@@ -966,6 +967,12 @@ message RoomChangeEvent {
 // read by the user.
 // Expects a RoomChangeEvent with unreadCount = 0 in return.
 message RoomMarkAsReadRequest {
+    string roomId = 1;
+}
+
+// Activate typing notice for the current user in the specified room.
+// Expects a RoomChangeEvent afterwards.
+message RoomTypingRequest {
     string roomId = 1;
 }
 
