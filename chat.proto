@@ -497,13 +497,10 @@ message Message {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 12;
-
-        // The message content if it is an audio file.
-        MessageContentAudio audioFile = 14;
-
-        // The message content if it is a video file.
-        MessageContentVideo videoFile = 15;
     }
+
+    reserved 14, 15;
+    reserved "audioFile", "videoFile";
 
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 13;
@@ -533,27 +530,6 @@ message MessageContentFile {
     // The name of the file, if available.
     optional string fileName = 2;
 }
-
-message MessageContentAudio {
-
-    // The relative path to the file starting from
-    // the `InitializationRequest::dataRoorPath`.
-    string filePath = 1;
-
-    // The name of the file, if available.
-    optional string fileName = 2;
-}
-
-message MessageContentVideo {
-
-    // The relative path to the file starting from
-    // the `InitializationRequest::dataRoorPath`.
-    string filePath = 1;
-
-    // The name of the file, if available.
-    optional string fileName = 2;
-}
-
 
 // The message content, if it is a message about a change in membership,
 // for example, when a user has left or entered the room.
@@ -608,13 +584,10 @@ message MessageSendRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 5;
-
-        // The message content if it is an audio file.
-        MessageContentAudio audioFile = 7;
-
-        // The message content if it is a video file.
-        MessageContentVideo videoFile = 8;
     }
+
+    reserved 7, 8;
+    reserved "audioFile", "videoFile";
 
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 6;
@@ -651,13 +624,10 @@ message MessageChangeRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 6;
-
-        // The message content if it is an audio file.
-        MessageContentAudio audioFile = 9;
-
-        // The message content if it is a video file.
-        MessageContentVideo videoFile = 10;
     }
+
+    reserved 9, 10;
+    reserved "audioFile", "videoFile";
 
     // Whether mentionedUserIds should be updated.
     bool hasMentionedUserIdsChanged = 7;
@@ -698,13 +668,10 @@ message MessageChangeEvent  {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 10;
-
-        // The message content if it is an audio file.
-        MessageContentAudio audioFile = 11;
-
-        // The message content if it is a video file.
-        MessageContentVideo videoFile = 12;
     }
+
+    reserved 11, 12;
+    reserved "audioFile", "videoFile";
 
     // Whether the field mentionedUserIds has changed.
     bool hasMentionedUserIdsChanged = 8;
