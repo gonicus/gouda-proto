@@ -489,9 +489,6 @@ message Message {
         // The message content if it is a plain text message.
         MessageContentText text = 9;
 
-        // The message content if it is an image.
-        MessageContentImage image = 10;
-
         // The message content if it is a file.
         MessageContentFile file = 11;
 
@@ -510,15 +507,6 @@ message MessageContentText {
 
     // The actual plain text content of the message.
     string content = 1;
-}
-
-message MessageContentImage {
-
-    // The relative path to the image starting from
-    // the `InitializationRequest::dataRootPath`.
-    // The file extension is used to identify the type
-    // of the image.
-    string imagePath = 1;
 }
 
 message MessageContentFile {
@@ -579,9 +567,6 @@ message MessageSendRequest {
         // The message content if it is a plain text message.
         MessageContentText text = 3;
 
-        // The message content if it is an image.
-        MessageContentImage image = 4;
-
         // The message content if it is a file.
         MessageContentFile file = 5;
     }
@@ -618,9 +603,6 @@ message MessageChangeRequest {
     oneof content {
         // The message content if it is a plain text message.
         MessageContentText text = 4;
-
-        // The message content if it is an image.
-        MessageContentImage image = 5;
 
         // The message content if it is a file.
         MessageContentFile file = 6;
@@ -659,9 +641,6 @@ message MessageChangeEvent  {
     oneof content {
         // The message content if it is a plain text message.
         MessageContentText text = 5;
-
-        // The message content if it is an image.
-        MessageContentImage image = 6;
 
         // The message content if it is a file.
         MessageContentFile file = 7;
