@@ -971,7 +971,6 @@ message RoomMarkAsReadRequest {
 }
 
 // Activate typing notice for the current user in the specified room.
-// Expects a RoomChangeEvent afterwards.
 message RoomTypingRequest {
     string roomId = 1;
 }
