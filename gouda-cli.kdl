@@ -4,7 +4,7 @@ about: Gouda subprocess implementing an IPC plugin
 
 flags:
   loglevel:
-    long: loglevel
+    long: log-level
     arg: level
     help: Set log level of gouda subprocess
     choices: [trace, debug, info, warn, error, off]
