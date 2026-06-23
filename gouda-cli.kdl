@@ -9,7 +9,11 @@ flags:
     help: Set log level of gouda subprocess
     choices: [trace, debug, info, warn, error, off]
     default: warn
-
+  logFilePath:
+    long: log-file-path
+    arg: path
+    help: Set log file path of gouda subprocess
+    default: gouda_client.log
 args:
   - name: request_socket_url
     help: Path to local socket where gouda-cli receives requests (encoded as RequestContainer message, see protobuf definition)
