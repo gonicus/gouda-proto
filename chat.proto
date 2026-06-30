@@ -420,7 +420,6 @@ message StatusUpdate {
         // than that, it has the same semantics as "LoggedOut".
         SessionInvalid = 4;
 
-        reserved 0;
         reserved "Disconnected";
     }
 
