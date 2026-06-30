@@ -948,7 +948,7 @@ message RoomChangeEvent {
     optional bool isFavorite = 12;
 
     // Set when the room-specific settings have changed. The message must
-    // contain all of the room settigs, even those which have not changed.
+    // contain all of the room settings, even those which have not changed.
     optional RoomSettings roomSettings = 13;
 }
 
