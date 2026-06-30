@@ -402,16 +402,27 @@ message IdentityProvidersResponse {
 message StatusUpdate {
 
     enum statusCode {
-
-        // No connection is made.
-        Disconnected = 0;
-
         // The server is connected, but the client is not authorized yet.
         Connected = 1;
 
         // The server is connected and the client is authorized.
         LoggedIn = 2;
-    };
+
+        // The user has been logged out and is not logged in any longer. The
+        // user can attempt to login again.
+        LoggedOut = 3;
+
+        // The headless client has no network connection to the backend. Any
+        // attempt to login or send requests will be responded with errors.
+        NetworkUnavailable = 4;
+
+        // The session has been invalidated (usually by another client). Other
+        // than that, it has the same semantics as "LoggedOut".
+        SessionInvalid = 5;
+
+        reserved Disconnected;
+        reserved 0;
+    }
 
     // The current connection status.
     statusCode code = 1;
