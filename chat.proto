@@ -721,7 +721,7 @@ message AttachmentDownloadRequest {
 
     // Id of the message to download the attachment from.
     // This has to be a message with a content of MessageContentFile.
-    string messagId = 2;
+    string messageId = 2;
 }
 
 // Response of a previously send AttachmentDownloadRequest, when the
