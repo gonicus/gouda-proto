@@ -528,6 +528,7 @@ message MessageContentFile {
     // the `InitializationRequest::dataRootPath`.
     // If not set, the file has not yet been downloaded.
     // Use the AttachmentDownloadRequest to download the file.
+    // This always has to be set when sending a message using MessageSendRequest.
     optional string filePath = 1;
 
     // The name of the file, if available.
