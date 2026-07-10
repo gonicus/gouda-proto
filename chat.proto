@@ -525,8 +525,10 @@ message MessageContentText {
 message MessageContentFile {
 
     // The relative path to the file starting from
-    // the `InitializationRequest::dataRoorPath`.
-    string filePath = 1;
+    // the `InitializationRequest::dataRootPath`.
+    // If not set, the file has not yet been downloaded.
+    // Use the AttachmentDownloadRequest to download the file.
+    optional string filePath = 1;
 
     // The name of the file, if available.
     optional string fileName = 2;
