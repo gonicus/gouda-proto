@@ -166,6 +166,9 @@ message Error {
 
         // The requested user was not found.
         UserNotFound = 17;
+
+        // The size limit of a message has been exceeded.
+        MessageSizeLimitExceeded = 18;
     };
 
     // The type of this error.
@@ -461,6 +464,9 @@ message CapabilityEvent {
 
     // List of MIME types that can be send via the backend.
     repeated string mimeTypes = 4;
+
+    // The maximum allowed size in bytes of media files that are uploaded.
+    uint64 mediaSizeLimit = 10;
 }
 
 // A message sent to a room.
