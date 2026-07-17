@@ -169,6 +169,9 @@ message Error {
 
         // The size limit of a message has been exceeded.
         MessageSizeLimitExceeded = 18;
+
+        // The size limit uploads has been exceeded.
+        UploadSizeLimitExceeded = 19;
     };
 
     // The type of this error.
