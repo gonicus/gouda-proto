@@ -599,6 +599,9 @@ message MessageSendRequest {
 
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 6;
+
+    // If the entire room has been mentioned.
+    bool roomMentioned = 9;
 }
 
 // Confirms that a message has been sent.
