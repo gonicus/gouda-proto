@@ -521,6 +521,9 @@ message Message {
 
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 13;
+
+    // If the entire room was mentioned.
+    bool roomMentioned = 16;
 }
 
 message MessageContentText {
@@ -906,6 +909,9 @@ message RoomPermissions {
 
     // The user can ban other users from the room.
     bool canBan = 4;
+
+    // The user can mention the entire room in a message.
+    bool canMentionRoom = 5;
 }
 
 // Informs the client about changes in a single room.
