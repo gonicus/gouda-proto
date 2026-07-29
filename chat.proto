@@ -900,6 +900,10 @@ message Room {
 
     // Room-specific settings
     RoomSettings roomSettings = 12;
+
+    // Optional invitation text if the user is invited but has not joined the
+    // room yet.
+    optional string invitationText = 13;
 }
 
 // Defines single points of authorization for a room that may or may not be done
