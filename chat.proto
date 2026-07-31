@@ -172,6 +172,9 @@ message Error {
 
         // The size limit of a media upload has been exceeded.
         UploadSizeLimitExceeded = 19;
+
+        // The thread with the given ID was not found.
+        ThreadNotFound = 20;
     };
 
     // The type of this error.
@@ -516,14 +519,17 @@ message Message {
         MessageContentMembershipChange membershipChange = 12;
     }
 
-    reserved 14, 15;
-    reserved "audioFile", "videoFile";
-
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 13;
 
     // If the entire room was mentioned.
     bool roomMentioned = 16;
+
+    // The ID of the thread, if the message was send within a thread.
+    optional string threadId = 17;
+
+    reserved 14, 15;
+    reserved "audioFile", "videoFile";
 }
 
 message MessageContentText {
@@ -594,14 +600,17 @@ message MessageSendRequest {
         MessageContentFile file = 5;
     }
 
-    reserved 7, 8;
-    reserved "audioFile", "videoFile";
-
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 6;
 
     // If the entire room has been mentioned.
     bool roomMentioned = 9;
+
+    // The ID of the thread, if the message should be send within a thread.
+    optional string threadId = 10;
+
+    reserved 7, 8;
+    reserved "audioFile", "videoFile";
 }
 
 // Confirms that a message has been sent.
