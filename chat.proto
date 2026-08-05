@@ -168,6 +168,15 @@ message Error {
 
         // The requested user was not found.
         UserNotFound = 17;
+
+        // The size limit of a message has been exceeded.
+        MessageSizeLimitExceeded = 18;
+
+        // The size limit of a media upload has been exceeded.
+        UploadSizeLimitExceeded = 19;
+
+        // The thread with the given ID was not found.
+        ThreadNotFound = 20;
     };
 
     // The type of this error.
@@ -463,6 +472,9 @@ message CapabilityEvent {
 
     // List of MIME types that can be send via the backend.
     repeated string mimeTypes = 4;
+
+    // The maximum allowed size in bytes of media files that are uploaded.
+    uint64 mediaSizeLimit = 10;
 }
 
 // A message sent to a room.
@@ -509,11 +521,17 @@ message Message {
         MessageContentMembershipChange membershipChange = 12;
     }
 
-    reserved 14, 15;
-    reserved "audioFile", "videoFile";
-
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 13;
+
+    // If the entire room was mentioned.
+    bool roomMentioned = 16;
+
+    // The ID of the thread, if the message was send within a thread.
+    optional string threadId = 17;
+
+    reserved 14, 15;
+    reserved "audioFile", "videoFile";
 }
 
 message MessageContentText {
@@ -587,11 +605,17 @@ message MessageSendRequest {
         MessageContentFile file = 5;
     }
 
-    reserved 7, 8;
-    reserved "audioFile", "videoFile";
-
     // Ids of users that have been mentioned in this message.
     repeated string mentionedUserIds = 6;
+
+    // If the entire room has been mentioned.
+    bool roomMentioned = 9;
+
+    // The ID of the thread, if the message should be send within a thread.
+    optional string threadId = 10;
+
+    reserved 7, 8;
+    reserved "audioFile", "videoFile";
 }
 
 // Confirms that a message has been sent.
@@ -633,6 +657,9 @@ message MessageChangeRequest {
     // Ids of users that have been mentioned in this message. The value of this
     // field is only defined when hasMentionedUserIdsChanged is true.
     repeated string mentionedUserIds = 8;
+
+    // Whether the roomMentioned field has changed.
+    optional bool roomMentioned = 13;
 }
 
 // Notifies about changes in a single Message.
@@ -674,6 +701,9 @@ message MessageChangeEvent  {
     // Ids of users that have been mentioned in this message. The value of this
     // field is only defined when hasMentionedUserIdsChanged is true.
     repeated string mentionedUserIds = 9;
+
+    // Whether the roomMentioned field has changed.
+    optional bool roomMentioned = 13;
 }
 
 // Request the backend to retract and delete an existing message.
@@ -904,6 +934,10 @@ message Room {
 
     // Room-specific settings
     RoomSettings roomSettings = 12;
+
+    // Optional invitation text if the user is invited but has not joined the
+    // room yet.
+    optional string invitationText = 13;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -922,6 +956,9 @@ message RoomPermissions {
 
     // The user can ban other users from the room.
     bool canBan = 4;
+
+    // The user can mention the entire room in a message.
+    bool canMentionRoom = 5;
 }
 
 // Informs the client about changes in a single room.
