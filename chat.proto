@@ -913,6 +913,9 @@ message Room {
     // Optional invitation text if the user is invited but has not joined the
     // room yet.
     optional string invitationText = 13;
+
+    // The ID of messages pinned to the room.
+    repeated string pinnedMessages = 14;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -987,6 +990,14 @@ message RoomChangeEvent {
     // Set when the room-specific settings have changed. The message must
     // contain all of the room settings, even those which have not changed.
     optional RoomSettings roomSettings = 13;
+
+    // If the pinnedMessages have changed with this event.
+    // If false, the pinnedMessages have not changed and only contain a
+    // default value that should not be used.
+    bool hasPinnedMessagesChanged = 14;
+
+    // The ID of messages pinned to the room.
+    repeated string pinnedMessages = 15;
 }
 
 // Notify the client that messages and notifications in this room have been
