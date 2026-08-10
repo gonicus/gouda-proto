@@ -43,6 +43,7 @@ message RequestContainer {
         RoomMessagesRequest roomMessagesRequest = 24;
         RoomMarkAsReadRequest roomMarkAsReadRequest = 25;
         RoomTypingRequest roomTypingRequest = 34;
+        RoomPinRequest roomPinRequest = 35;
 
         MessageSendRequest messageSendRequest = 26;
         MessageRemoveRequest messageRemoveRequest = 27;
@@ -1010,6 +1011,19 @@ message RoomMarkAsReadRequest {
 // Activate typing notice for the current user in the specified room.
 message RoomTypingRequest {
     string roomId = 1;
+}
+
+// Pin or unpin an existing message to or from a room.
+// Expects a RoomChangeEvent afterwards.
+message RoomPinRequest {
+    // The ID of the room the message should be pinned to.
+    string roomId = 1;
+
+    // The ID of the message to pin.
+    string messageId = 2;
+
+    // If the message should be pinned or unpinned.
+    bool pinned = 3;
 }
 
 // Describes a reaction to a message, e.g. attaching an emoji to it.
