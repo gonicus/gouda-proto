@@ -938,6 +938,9 @@ message RoomPermissions {
 
     // The user can mention the entire room in a message.
     bool canMentionRoom = 5;
+
+    // The user can pin messages in a room.
+    bool canPinMessages = 6;
 }
 
 // Informs the client about changes in a single room.
