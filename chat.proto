@@ -51,6 +51,7 @@ message RequestContainer {
         Reaction createReactionRequest = 29;
         Reaction removeReactionRequest = 30;
         MessageRequest messageRequest = 31;
+        AttachmentDownloadRequest attachmentDownloadRequest = 35;
     }
 }
 
@@ -99,6 +100,7 @@ message ResponseContainer {
         Reaction reactionCreatedEvent = 27;
         Reaction reactionRemovedEvent = 28;
         Message messageResponse = 29;
+        AttachmentDownloadResponse attachmentDownloadResponse = 32;
 
         MultipartEnd multipartEnd = 30;
 
@@ -542,8 +544,11 @@ message MessageContentText {
 message MessageContentFile {
 
     // The relative path to the file starting from
-    // the `InitializationRequest::dataRoorPath`.
-    string filePath = 1;
+    // the `InitializationRequest::dataRootPath`.
+    // If not set, the file has not yet been downloaded.
+    // Use the AttachmentDownloadRequest to download the file.
+    // This always has to be set when sending a message using MessageSendRequest.
+    optional string filePath = 1;
 
     // The name of the file, if available.
     optional string fileName = 2;
@@ -737,6 +742,26 @@ message MessageRemoveEvent {
 
     // The origin the the removal event
     EventOrigin origin = 4;
+}
+
+// Request to download an attachment inside a specific room.
+// An AttachmentDownloadResponse is expected next.
+message AttachmentDownloadRequest {
+
+    // Id of the room from where the attachment should be downloaded.
+    string roomId = 1;
+
+    // Id of the message to download the attachment from.
+    // This has to be a message with a content of MessageContentFile.
+    string messageId = 2;
+}
+
+// Response of a previously send AttachmentDownloadRequest, when the
+// attachment has been successfully downloaded.
+message AttachmentDownloadResponse {
+
+    // The relative path from the data root directory to the downloaded asset.
+    string path = 1;
 }
 
 // Request a list of rooms.
