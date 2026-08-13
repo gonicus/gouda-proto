@@ -496,9 +496,6 @@ message Message {
     // message.
     optional string relatedMessageId = 5;
 
-    // Whether this message is pinned, i.e. prominently shown in the room.
-    bool isPinned = 6;
-
     // Whether this message is considered to be encrypted - which means that the latest
     // decryption attempt failed. When this field is true, server implementations should
     // leave the `content` empty and clients should ignore the value of `content`.
@@ -529,8 +526,8 @@ message Message {
     // The ID of the thread, if the message was send within a thread.
     optional string threadId = 17;
 
-    reserved 14, 15;
-    reserved "audioFile", "videoFile";
+    reserved 6, 14, 15;
+    reserved "isPinned", "audioFile", "videoFile";
 }
 
 message MessageContentText {
@@ -668,10 +665,6 @@ message MessageChangeEvent  {
     // message.
     string messageId = 2;
 
-    // Whether the message is pinned (i.e. shown prominently in the room) or
-    // not. Shall only be set if it has changed.
-    optional bool isPinned = 3;
-
     // Whether the message is encrypted or not. Shall only be set if it has
     // changed. If it changes, the content should usually change as well.
     optional bool isEncrypted = 4;
@@ -688,9 +681,6 @@ message MessageChangeEvent  {
         MessageContentMembershipChange membershipChange = 10;
     }
 
-    reserved 11, 12;
-    reserved "audioFile", "videoFile";
-
     // Whether the field mentionedUserIds has changed.
     bool hasMentionedUserIdsChanged = 8;
 
@@ -700,6 +690,9 @@ message MessageChangeEvent  {
 
     // Whether the roomMentioned field has changed.
     optional bool roomMentioned = 13;
+
+    reserved 3, 11, 12;
+    reserved "isPinned", "audioFile", "videoFile";
 }
 
 // Request the backend to retract and delete an existing message.
