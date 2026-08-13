@@ -572,10 +572,10 @@ message MessageContentMembershipChange {
 enum PollType {
 
     // The answers of the poll are only visible when the poll is completed.
-    Disclosed = 1;
+    Disclosed = 0;
 
     // The answers of the poll are always visible.
-    Undisclosed = 2;
+    Undisclosed = 1;
 }
 
 // An option of a poll.
