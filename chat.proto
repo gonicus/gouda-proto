@@ -582,17 +582,13 @@ enum PollType {
 // An option of a poll.
 message PollOption {
 
-    // The ID of the option.
-    // Must be unique within a poll.
-    string id = 1;
-
     // The text of the option.
-    string text = 2;
+    string text = 1;
 
     // The ID of the users who selected this option.
     // If the poll is undisclosed, this will only be set when the
     // poll is completed.
-    repeated string answers = 3;
+    repeated string answers = 2;
 }
 
 // The message content, if the message is a poll.
@@ -612,7 +608,8 @@ message MessageContentPoll {
     string question = 4;
 
     // The available options of the poll.
-    repeated PollOption options = 5;
+    // The map key is the ID of the option.
+    map<string, PollOption> options = 5;
 }
 
 // Answer a poll with a specific option.
