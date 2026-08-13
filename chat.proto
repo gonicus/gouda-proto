@@ -590,7 +590,7 @@ message PollOption {
     string text = 2;
 
     // The ID of the users who selected this option.
-    // If the poll is disclosed, this will only be set when the
+    // If the poll is undisclosed, this will only be set when the
     // poll is completed.
     repeated string answers = 3;
 }
