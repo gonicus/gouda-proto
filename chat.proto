@@ -94,7 +94,6 @@ message ResponseContainer {
         RoomChangeEvent roomChangeEvent = 22;
 
         MessageSendResponse messageSendResponse = 23;
-        MessageRemoveEvent messageRemoveEvent = 24;
         Message messageReceivedEvent = 25;
         MessageChangeEvent messageChangeEvent = 26;
         Reaction reactionCreatedEvent = 27;
@@ -104,6 +103,9 @@ message ResponseContainer {
         MultipartEnd multipartEnd = 30;
 
     }
+
+    reserved 24;
+    reserved "messageRemoveEvent";
 }
 
 // Generic error occurred in the backend or the headless client.
@@ -519,6 +521,9 @@ message Message {
 
         // The message content if it is a poll.
         MessageContentPoll poll = 18;
+
+        // The message content if it has been removed.
+        MessageContentRemoved removed = 19;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -633,6 +638,18 @@ message PollAnswerRequest {
 
     // If the option is being selected or deselected.
     bool selected = 4;
+
+}
+
+// The message content, if the message has previously been removed and the content
+// is no longer available.
+message MessageContentRemoved {
+
+    // Optional reason why the message was removed.
+    option string reason = 1;
+
+    // The origin of the removal.
+    EventOrigin origin = 2;
 
 }
 
@@ -756,6 +773,9 @@ message MessageChangeEvent  {
 
         // The message content if it is a poll.
         MessageContentPoll poll = 14;
+
+        // The message content if it has been removed.
+        MessageContentRemoved removed = 15;
     }
 
     // Whether the field mentionedUserIds has changed.
@@ -773,7 +793,7 @@ message MessageChangeEvent  {
 }
 
 // Request the backend to retract and delete an existing message.
-// Must result in an Error or MessageRemoveEvent.
+// Must result in an Error or MessageChangeEvent with the content MessageContentRemoved.
 message MessageRemoveRequest {
 
     // The ID of the room the message is located.
@@ -791,22 +811,6 @@ enum EventOrigin {
 
     // The event was initiated by the backend application
     BackendOrigin = 1;
-}
-
-// Event notifying that a message has been retracted and removed.
-message MessageRemoveEvent {
-
-    // The ID of the room the message is located.
-    string roomId = 1;
-
-    // Id of the removed message.
-    string messageId = 2;
-
-    // Optional reason for the removal
-    optional string reason = 3;
-
-    // The origin the the removal event
-    EventOrigin origin = 4;
 }
 
 // Request a list of rooms.
