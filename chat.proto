@@ -51,6 +51,7 @@ message RequestContainer {
         Reaction createReactionRequest = 29;
         Reaction removeReactionRequest = 30;
         MessageRequest messageRequest = 31;
+        PollAnswerRequest pollAnswerRequest = 36;
     }
 }
 
@@ -515,6 +516,9 @@ message Message {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 12;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 18;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -568,6 +572,70 @@ message MessageContentMembershipChange {
     string affectedUserId = 2;
 }
 
+// The type of a poll.
+enum PollType {
+
+    // The answers of the poll are always visible.
+    Disclosed = 0;
+
+    // The answers of the poll are only visible when the poll is completed.
+    Undisclosed = 1;
+}
+
+// An option of a poll.
+message PollOption {
+
+    // The ID of the option. Can be arbitrarily selected by the creator, but
+    // must be unique within a poll.
+    string id = 1;
+
+    // The text of the option.
+    string text = 2;
+
+    // The ID of the users who selected this option.
+    // If the poll is undisclosed, this will only be set when the
+    // poll is completed.
+    repeated string votedUserIds = 3;
+}
+
+// The message content, if the message is a poll.
+message MessageContentPoll {
+
+    // The type of the poll
+    PollType type = 1;
+
+    // If the poll is completed.
+    bool completed = 2;
+
+    // The maximum number of options a user can selected.
+    // Must be greater than or equal to 1.
+    uint32 maxSelections = 3;
+
+    // The question of the poll.
+    string question = 4;
+
+    // The available options of the poll.
+    repeated PollOption options = 5;
+}
+
+// Answer a poll with a specific option.
+// Expects a MessageChangeEvent of the poll next.
+message PollAnswerRequest {
+
+    // ID of the room the poll is in.
+    string roomId = 1;
+
+    // The ID of the poll message.
+    string messageId = 2;
+
+    // The Id of the option to answer with.
+    string optionId = 3;
+
+    // If the option is being selected or deselected.
+    bool selected = 4;
+
+}
+
 // Request a single specific message.
 message MessageRequest {
 
@@ -596,6 +664,9 @@ message MessageSendRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 5;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 11;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -639,6 +710,9 @@ message MessageChangeRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 6;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 11;
     }
 
     reserved 9, 10;
@@ -679,6 +753,9 @@ message MessageChangeEvent  {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 10;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 14;
     }
 
     // Whether the field mentionedUserIds has changed.
