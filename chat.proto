@@ -588,7 +588,7 @@ message PollOption {
     // The ID of the users who selected this option.
     // If the poll is undisclosed, this will only be set when the
     // poll is completed.
-    repeated string answers = 2;
+    repeated string votedUserIds = 2;
 }
 
 // The message content, if the message is a poll.
