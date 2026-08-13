@@ -582,8 +582,8 @@ enum PollType {
 // An option of a poll.
 message PollOption {
 
-    // The ID of the option.
-    // Must be unique within a poll.
+    // The ID of the option. Can be arbitrarily selected by the creator, but
+    // must be unique within a poll.
     string id = 1;
 
     // The text of the option.
