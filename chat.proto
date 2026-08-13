@@ -646,7 +646,7 @@ message PollAnswerRequest {
 message MessageContentRemoved {
 
     // Optional reason why the message was removed.
-    option string reason = 1;
+    optional string reason = 1;
 
     // The origin of the removal.
     EventOrigin origin = 2;
