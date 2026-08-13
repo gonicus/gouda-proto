@@ -51,6 +51,7 @@ message RequestContainer {
         Reaction createReactionRequest = 29;
         Reaction removeReactionRequest = 30;
         MessageRequest messageRequest = 31;
+        PollAnswerRequest pollAnswerRequest = 36;
     }
 }
 
@@ -589,13 +590,15 @@ message PollOption {
     string text = 2;
 
     // The ID of the users who selected this option.
+    // If the poll is disclosed, this will only be set when the
+    // poll is completed.
     repeated string answers = 3;
 }
 
 // The message content, if the message is a poll.
 message MessageContentPoll {
 
-    // Type type of the poll
+    // The type of the poll
     PollType type = 1;
 
     // If the poll is completed.
@@ -610,6 +613,24 @@ message MessageContentPoll {
 
     // The available options of the poll.
     repeated PollOption options = 5;
+}
+
+// Answer a poll with a specific option.
+// Expects a MessageChangeEvent of the poll next.
+message PollAnswerRequest {
+
+    // ID of the room the poll is in.
+    string roomId = 1;
+
+    // The ID of the poll message.
+    string messageId = 2;
+
+    // The Id of the option to answer with.
+    string optionId = 3;
+
+    // If the option is being selected or deselected.
+    bool selected = 4;
+
 }
 
 // Request a single specific message.
