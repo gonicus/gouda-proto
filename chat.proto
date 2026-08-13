@@ -516,6 +516,9 @@ message Message {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 12;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 18;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -661,6 +664,9 @@ message MessageSendRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 5;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 11;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -704,6 +710,9 @@ message MessageChangeRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 6;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 11;
     }
 
     reserved 9, 10;
@@ -744,6 +753,9 @@ message MessageChangeEvent  {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 10;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 14;
     }
 
     // Whether the field mentionedUserIds has changed.
