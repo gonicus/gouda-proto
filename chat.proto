@@ -601,9 +601,9 @@ message MessageContentPoll {
     // If the poll is completed.
     bool completed = 2;
 
-    // The maximum number of answers a user can selected.
+    // The maximum number of options a user can selected.
     // Must be greater than or equal to 1.
-    uint8 maxSelections = 3;
+    uint32 maxSelections = 3;
 
     // The question of the poll.
     string question = 4;
