@@ -94,6 +94,7 @@ message ResponseContainer {
         RoomChangeEvent roomChangeEvent = 22;
 
         MessageSendResponse messageSendResponse = 23;
+        MessageRemoveEvent messageRemoveEvent = 24;
         Message messageReceivedEvent = 25;
         MessageChangeEvent messageChangeEvent = 26;
         Reaction reactionCreatedEvent = 27;
@@ -101,11 +102,7 @@ message ResponseContainer {
         Message messageResponse = 29;
 
         MultipartEnd multipartEnd = 30;
-
     }
-
-    reserved 24;
-    reserved "messageRemoveEvent";
 }
 
 // Generic error occurred in the backend or the headless client.
@@ -643,14 +640,11 @@ message PollAnswerRequest {
 
 // The message content, if the message has previously been removed and the content
 // is no longer available.
+// Unlike MessageRemoveEvent, this should be displayed to the user.
 message MessageContentRemoved {
 
     // Optional reason why the message was removed.
     optional string reason = 1;
-
-    // The origin of the removal.
-    EventOrigin origin = 2;
-
 }
 
 // Request a single specific message.
@@ -803,14 +797,17 @@ message MessageRemoveRequest {
     string messageId = 2;
 }
 
-// Specifies the origin of an event (where ambiguous)
-enum EventOrigin {
+// Event notifying that a message has been retracted by the backend.
+// Unlike a MessageChangeEvent with MessageContentRemove, this should not be displayed
+// to the user.
+message MessageRemoveEvent {
 
-    // The event was user-initiated
-    UserOrigin = 0;
+    // The ID of the room the message is located.
+    string roomId = 1;
 
-    // The event was initiated by the backend application
-    BackendOrigin = 1;
+    // Id of the removed message.
+    string messageId = 2;
+
 }
 
 // Request a list of rooms.
