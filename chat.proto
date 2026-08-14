@@ -798,7 +798,7 @@ message MessageRemoveRequest {
 }
 
 // Event notifying that a message has been retracted by the backend.
-// Unlike a MessageChangeEvent with MessageContentRemove, this should not be displayed
+// Unlike a MessageChangeEvent with MessageContentRemoved, this should not be displayed
 // to the user.
 message MessageRemoveEvent {
 
