@@ -808,6 +808,8 @@ message MessageRemoveEvent {
     // Id of the removed message.
     string messageId = 2;
 
+    reserved 3, 4;
+    reserved "reason", "origin";
 }
 
 // Request a list of rooms.
