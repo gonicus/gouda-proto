@@ -791,6 +791,9 @@ message MessageRemoveRequest {
 
     // Id of the chat message that shall be removed.
     string messageId = 2;
+
+    // Optional text explaining why the message shall be removed.
+    optional string reason = 3;
 }
 
 // Event notifying that a message has been retracted by the backend.
