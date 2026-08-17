@@ -630,7 +630,7 @@ message PollAnswerRequest {
     // The ID of the poll message.
     string messageId = 2;
 
-    // The ID of the selected options.
+    // The ID of the selected options. The number of ids must not exceed maxSelections.
     repeated string optionId = 3;
 }
 
