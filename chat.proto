@@ -630,8 +630,8 @@ message PollAnswerRequest {
     // The ID of the poll message.
     string messageId = 2;
 
-    // The Id of the option to answer with.
-    string optionId = 3;
+    // The ID of the selected options.
+    repeated string optionId = 3;
 
     // If the option is being selected or deselected.
     bool selected = 4;
