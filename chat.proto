@@ -1080,7 +1080,7 @@ message RoomChangeEvent {
 
     // Ids of users and the last message they have marked as read inside the room.
     // May only contain changed user ids.
-    map<string, string> readMarker = 15;
+    map<string, string> readMarker = 16;
 }
 
 // Notify the client that messages and notifications in this room have been
