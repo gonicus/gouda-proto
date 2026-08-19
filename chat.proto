@@ -989,6 +989,9 @@ message Room {
 
     // The ID of messages pinned to the room.
     repeated string pinnedMessages = 14;
+
+    // Ids of users and the last message they have marked as read inside the room.
+    map<string, string> readMarker = 15;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -1074,6 +1077,10 @@ message RoomChangeEvent {
 
     // The ID of messages pinned to the room.
     repeated string pinnedMessages = 15;
+
+    // Ids of users and the last message they have marked as read inside the room.
+    // May only contain changed user ids.
+    map<string, string> readMarker = 15;
 }
 
 // Notify the client that messages and notifications in this room have been
