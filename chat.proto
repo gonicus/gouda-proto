@@ -1159,6 +1159,9 @@ message RoomMessagesRequest {
     // list. If the toMessageId field is set as well, the resulting list must
     // be limited at whatever applies first - the toMessageId or the limit.
     optional uint32 limit = 4;
+
+    // If the messages of a specific thread should be fetched.
+    optional string threadId = 5;
 }
 
 // Describes a request to search for known users, i.e. accounts registered to
