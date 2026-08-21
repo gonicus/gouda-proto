@@ -1188,6 +1188,9 @@ message UserStatus {
 
     // Optional free-text status message that other users can see.
     optional string statusMessage = 2;
+
+    // Optional emoji for the status message.
+    optional string statusEmoji = 3;
 }
 
 // Issue an invite to one or more users to join a chat room.
