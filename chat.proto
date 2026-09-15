@@ -473,7 +473,7 @@ message CapabilityEvent {
     repeated string mimeTypes = 4;
 
     // The maximum allowed size in bytes of media files that are uploaded.
-    uint64 mediaSizeLimit = 10;
+    optional uint64 mediaSizeLimit = 10;
 }
 
 // A message sent to a room.
