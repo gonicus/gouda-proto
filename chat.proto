@@ -43,6 +43,7 @@ message RequestContainer {
         RoomMessagesRequest roomMessagesRequest = 24;
         RoomMarkAsReadRequest roomMarkAsReadRequest = 25;
         RoomTypingRequest roomTypingRequest = 34;
+        RoomPinRequest roomPinRequest = 35;
 
         MessageSendRequest messageSendRequest = 26;
         MessageRemoveRequest messageRemoveRequest = 27;
@@ -50,7 +51,8 @@ message RequestContainer {
         Reaction createReactionRequest = 29;
         Reaction removeReactionRequest = 30;
         MessageRequest messageRequest = 31;
-        AttachmentDownloadRequest attachmentDownloadRequest = 35;
+        PollAnswerRequest pollAnswerRequest = 36;
+        AttachmentDownloadRequest attachmentDownloadRequest = 37;
     }
 }
 
@@ -102,7 +104,6 @@ message ResponseContainer {
         AttachmentDownloadResponse attachmentDownloadResponse = 32;
 
         MultipartEnd multipartEnd = 30;
-
     }
 }
 
@@ -474,7 +475,7 @@ message CapabilityEvent {
     repeated string mimeTypes = 4;
 
     // The maximum allowed size in bytes of media files that are uploaded.
-    uint64 mediaSizeLimit = 10;
+    optional uint64 mediaSizeLimit = 10;
 }
 
 // A message sent to a room.
@@ -497,9 +498,6 @@ message Message {
     // message.
     optional string relatedMessageId = 5;
 
-    // Whether this message is pinned, i.e. prominently shown in the room.
-    bool isPinned = 6;
-
     // Whether this message is considered to be encrypted - which means that the latest
     // decryption attempt failed. When this field is true, server implementations should
     // leave the `content` empty and clients should ignore the value of `content`.
@@ -519,6 +517,12 @@ message Message {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 12;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 18;
+
+        // The message content if it has been removed.
+        MessageContentRemoved removed = 19;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -530,8 +534,8 @@ message Message {
     // The ID of the thread, if the message was send within a thread.
     optional string threadId = 17;
 
-    reserved 14, 15;
-    reserved "audioFile", "videoFile";
+    reserved 6, 14, 15;
+    reserved "isPinned", "audioFile", "videoFile";
 }
 
 message MessageContentText {
@@ -575,6 +579,75 @@ message MessageContentMembershipChange {
     string affectedUserId = 2;
 }
 
+// The type of a poll.
+enum PollType {
+
+    // The answers of the poll are always visible.
+    Disclosed = 0;
+
+    // The answers of the poll are only visible when the poll is completed.
+    Undisclosed = 1;
+}
+
+// An option of a poll.
+message PollOption {
+
+    // The ID of the option. Can be arbitrarily selected by the creator, but
+    // must be unique within a poll.
+    string id = 1;
+
+    // The text of the option.
+    string text = 2;
+
+    // The ID of the users who selected this option.
+    // If the poll is undisclosed, this will only be set when the
+    // poll is completed.
+    repeated string votedUserIds = 3;
+}
+
+// The message content, if the message is a poll.
+message MessageContentPoll {
+
+    // The type of the poll
+    PollType type = 1;
+
+    // If the poll is completed.
+    bool completed = 2;
+
+    // The maximum number of options a user can selected.
+    // Must be greater than or equal to 1.
+    uint32 maxSelections = 3;
+
+    // The question of the poll.
+    string question = 4;
+
+    // The available options of the poll.
+    repeated PollOption options = 5;
+}
+
+// Answer a poll with a specific option.
+// Expects a MessageChangeEvent of the poll next.
+message PollAnswerRequest {
+
+    // ID of the room the poll is in.
+    string roomId = 1;
+
+    // The ID of the poll message.
+    string messageId = 2;
+
+    // The ID of the selected options. The number of ids must not exceed maxSelections.
+    repeated string optionId = 3;
+}
+
+// The message content, if the message has previously been removed and the content
+// is no longer available.
+// Unlike MessageRemoveEvent, this should be displayed to the user.
+message MessageContentRemoved {
+
+    // Optional reason why the message was removed.
+    optional string reason = 1;
+}
+
 // Request a single specific message.
 message MessageRequest {
 
@@ -603,6 +676,9 @@ message MessageSendRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 5;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 11;
     }
 
     // Ids of users that have been mentioned in this message.
@@ -646,6 +722,9 @@ message MessageChangeRequest {
 
         // The message content if it is a file.
         MessageContentFile file = 6;
+
+        // The message content if it is a poll.
+        MessageContentPoll poll = 11;
     }
 
     reserved 9, 10;
@@ -672,10 +751,6 @@ message MessageChangeEvent  {
     // message.
     string messageId = 2;
 
-    // Whether the message is pinned (i.e. shown prominently in the room) or
-    // not. Shall only be set if it has changed.
-    optional bool isPinned = 3;
-
     // Whether the message is encrypted or not. Shall only be set if it has
     // changed. If it changes, the content should usually change as well.
     optional bool isEncrypted = 4;
@@ -690,10 +765,13 @@ message MessageChangeEvent  {
 
         // The message content if it is a membership change.
         MessageContentMembershipChange membershipChange = 10;
-    }
 
-    reserved 11, 12;
-    reserved "audioFile", "videoFile";
+        // The message content if it is a poll.
+        MessageContentPoll poll = 14;
+
+        // The message content if it has been removed.
+        MessageContentRemoved removed = 15;
+    }
 
     // Whether the field mentionedUserIds has changed.
     bool hasMentionedUserIdsChanged = 8;
@@ -704,10 +782,13 @@ message MessageChangeEvent  {
 
     // Whether the roomMentioned field has changed.
     optional bool roomMentioned = 13;
+
+    reserved 3, 11, 12;
+    reserved "isPinned", "audioFile", "videoFile";
 }
 
 // Request the backend to retract and delete an existing message.
-// Must result in an Error or MessageRemoveEvent.
+// Must result in an Error or MessageChangeEvent with the content MessageContentRemoved.
 message MessageRemoveRequest {
 
     // The ID of the room the message is located.
@@ -715,19 +796,14 @@ message MessageRemoveRequest {
 
     // Id of the chat message that shall be removed.
     string messageId = 2;
+
+    // Optional text explaining why the message shall be removed.
+    optional string reason = 3;
 }
 
-// Specifies the origin of an event (where ambiguous)
-enum EventOrigin {
-
-    // The event was user-initiated
-    UserOrigin = 0;
-
-    // The event was initiated by the backend application
-    BackendOrigin = 1;
-}
-
-// Event notifying that a message has been retracted and removed.
+// Event notifying that a message has been retracted by the backend.
+// Unlike a MessageChangeEvent with MessageContentRemoved, this should not be displayed
+// to the user.
 message MessageRemoveEvent {
 
     // The ID of the room the message is located.
@@ -736,11 +812,8 @@ message MessageRemoveEvent {
     // Id of the removed message.
     string messageId = 2;
 
-    // Optional reason for the removal
-    optional string reason = 3;
-
-    // The origin the the removal event
-    EventOrigin origin = 4;
+    reserved 3, 4;
+    reserved "reason", "origin";
 }
 
 // Request to download an attachment inside a specific room.
@@ -938,6 +1011,12 @@ message Room {
     // Optional invitation text if the user is invited but has not joined the
     // room yet.
     optional string invitationText = 13;
+
+    // The ID of messages pinned to the room.
+    repeated string pinnedMessages = 14;
+
+    // User IDs and the timestamp up to the time they read the chat.
+    map<string, uint64> readMarker = 15;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -959,6 +1038,9 @@ message RoomPermissions {
 
     // The user can mention the entire room in a message.
     bool canMentionRoom = 5;
+
+    // The user can pin messages in a room.
+    bool canPinMessages = 6;
 }
 
 // Informs the client about changes in a single room.
@@ -1012,6 +1094,18 @@ message RoomChangeEvent {
     // Set when the room-specific settings have changed. The message must
     // contain all of the room settings, even those which have not changed.
     optional RoomSettings roomSettings = 13;
+
+    // If the pinnedMessages have changed with this event.
+    // If false, the pinnedMessages have not changed and only contain a
+    // default value that should not be used.
+    bool hasPinnedMessagesChanged = 14;
+
+    // The ID of messages pinned to the room.
+    repeated string pinnedMessages = 15;
+
+    // User IDs and the timestamp up to the time they read the chat.
+    // May only contain changed user ids.
+    map<string, uint64> readMarker = 16;
 }
 
 // Notify the client that messages and notifications in this room have been
@@ -1024,6 +1118,19 @@ message RoomMarkAsReadRequest {
 // Activate typing notice for the current user in the specified room.
 message RoomTypingRequest {
     string roomId = 1;
+}
+
+// Pin or unpin an existing message to or from a room.
+// Expects a RoomChangeEvent afterwards.
+message RoomPinRequest {
+    // The ID of the room the message should be pinned to.
+    string roomId = 1;
+
+    // The ID of the message to pin.
+    string messageId = 2;
+
+    // If the message should be pinned or unpinned.
+    bool pinned = 3;
 }
 
 // Describes a reaction to a message, e.g. attaching an emoji to it.
@@ -1077,6 +1184,9 @@ message RoomMessagesRequest {
     // list. If the toMessageId field is set as well, the resulting list must
     // be limited at whatever applies first - the toMessageId or the limit.
     optional uint32 limit = 4;
+
+    // If the messages of a specific thread should be fetched.
+    optional string threadId = 5;
 }
 
 // Describes a request to search for known users, i.e. accounts registered to
