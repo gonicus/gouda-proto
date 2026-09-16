@@ -535,6 +535,9 @@ message Message {
     // The ID of the thread, if the message was send within a thread.
     optional string threadId = 17;
 
+    // If the message has been edited.
+    bool edited = 20;
+
     reserved 6, 14, 15;
     reserved "isPinned", "audioFile", "videoFile";
 }
