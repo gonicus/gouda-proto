@@ -947,13 +947,6 @@ message RoomSettings {
     optional NotificationSetting notificationSetting = 1;
 }
 
-// Metadata of a conference.
-message ConferenceMetadata {
-
-    // The URL to the conference.
-    string url = 1;
-}
-
 // Describes a room entity. This might be a room with several users or just a
 // direct chat between two.
 message Room {
@@ -1009,8 +1002,8 @@ message Room {
     // User IDs and the timestamp up to the time they read the chat.
     map<string, uint64> readMarker = 15;
 
-    // The conference metadata, if the room is associated with a conference.
-    optional ConferenceMetadata conference = 16;
+    // The conference url, if the room is associated with a conference.
+    optional string conferenceUrl = 16;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -1104,8 +1097,8 @@ message RoomChangeEvent {
     // May only contain changed user ids.
     map<string, uint64> readMarker = 16;
 
-    // Updated conference metadata, if it has changed.
-    optional ConferenceMetadata conference = 17;
+    // Updated conference url, if it has changed.
+    optional string conferenceUrl = 17;
 }
 
 // Notify the client that messages and notifications in this room have been
@@ -1330,8 +1323,8 @@ message RoomChangeRequest {
     // An empty string means that the room avatar shall be removed.
     optional string avatarPath = 5;
 
-    // If the conference metadata should be changed.
-    optional ConferenceMetadata conference = 6;
+    // If the conference the room is associated with should be changed.
+    optional string conferenceUrl = 6;
 }
 
 // Request to leave a specific room.
