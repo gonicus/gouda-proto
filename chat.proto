@@ -1029,8 +1029,8 @@ message RoomPermissions {
     // The user can pin messages in a room.
     bool canPinMessages = 6;
 
-    // The user can edit the conference metadata of the room.
-    bool canEditConference = 7;
+    // The user can edit the conference url of the room.
+    bool canEditConferenceUrl = 7;
 }
 
 // Informs the client about changes in a single room.
