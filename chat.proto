@@ -1004,6 +1004,9 @@ message Room {
 
     // The conference url, if the room is associated with a conference.
     optional string conferenceUrl = 16;
+
+    // If the room is a low priority room.
+    bool lowPriority = 17;
 }
 
 // Defines single points of authorization for a room that may or may not be done
@@ -1099,6 +1102,9 @@ message RoomChangeEvent {
 
     // Updated conference url, if it has changed.
     optional string conferenceUrl = 17;
+
+    // Updates low priority, if it has changed.
+    optional bool lowPritory = 18;
 }
 
 // Notify the client that messages and notifications in this room have been
@@ -1325,6 +1331,9 @@ message RoomChangeRequest {
 
     // If the conference the room is associated with should be changed.
     optional string conferenceUrl = 6;
+
+    // If the low priority flag of the room should be changed.
+    optional bool lowPriority = 7;
 }
 
 // Request to leave a specific room.
