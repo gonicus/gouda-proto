@@ -1104,7 +1104,7 @@ message RoomChangeEvent {
     optional string conferenceUrl = 17;
 
     // Updated low priority flag, if it has changed.
-    optional bool lowPritory = 18;
+    optional bool lowPriority = 18;
 }
 
 // Notify the client that messages and notifications in this room have been
