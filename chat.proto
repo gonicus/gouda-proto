@@ -1103,7 +1103,7 @@ message RoomChangeEvent {
     // Updated conference url, if it has changed.
     optional string conferenceUrl = 17;
 
-    // Updates low priority, if it has changed.
+    // Updated low priority flag, if it has changed.
     optional bool lowPritory = 18;
 }
 
